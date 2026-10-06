@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学祭運営オンラインポータル</title>
+  <style>
+    body { font-family: sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+    .hero { background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 60px 20px; text-align: center; }
+    .hero h1 { margin: 0 0 10px 0; font-size: 2.2em; }
+    .container { max-width: 800px; margin: -30px auto 40px; padding: 0 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .card { background: white; padding: 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; }
+    .card h3 { margin-top: 0; color: #333; }
+    .card p { color: #666; font-size: 0.9em; min-height: 40px; }
+    .btn { display: inline-block; width: 100%; padding: 12px 0; background: #007bff; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; box-sizing: border-box; }
+    .btn-admin { background: #343a40; }
+    .btn-user { background: #28a745; }
+    .search-box { margin-top: 15px; }
+    .search-box input { padding: 8px; width: 60%; border: 1px solid #ccc; border-radius: 4px; }
+    .search-box button { padding: 8px 12px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <h1>学祭運営管理ポータル</h1>
+    <p>団体登録・メンバー追加・各種書類申請を一元管理します</p>
+  </div>
+
+  <div class="container">
+    <div class="grid">
+      
+      <!-- 代表者用 -->
+      <div class="card">
+        <h3>🎪 出展団体をつくる</h3>
+        <p>学祭に新規出展する団体の代表者はこちらから初回登録を行ってください。</p>
+        <a href="register-org.html" class="btn">新規団体登録</a>
+      </div>
+
+      <!-- メンバー用 -->
+      <div class="card">
+        <h3>👤 メンバー参加 / マイページ</h3>
+        <p>招待コードをお持ちの方、個人申請（調理責任者講習等）を行う方はこちら。</p>
+        <a href="user.html" class="btn btn-user">個人マイページへ</a>
+      </div>
+
+      <!-- 運営用 -->
+      <div class="card">
+        <h3>⚙️ 運営本部 管理ポータル</h3>
+        <p>学祭実行委員会用の管理画面です。（申請管理・名簿検索・フォーム作成）</p>
+        <a href="admin.html" class="btn btn-admin">管理画面を開く</a>
+      </div>
+
+    </div>
+
+    <!-- 団体ページダイレクトアクセス -->
+    <div class="card" style="margin-top:20px;">
+      <h3>🔍 登録済み団体ページの表示</h3>
+      <p>発行された「団体ID（例: ORG-XXXXXX）」を入力して直接ダッシュボードを開きます。</p>
+      <div class="search-box">
+        <input type="text" id="direct-org-id" placeholder="団体IDを入力">
+        <button onclick="openOrgPage()">団体ページへ</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openOrgPage() {
+      const id = document.getElementById('direct-org-id').value.trim();
+      if (id) {
+        window.location.href = `group.html?org_id=${encodeURIComponent(id)}`;
+      } else {
+        alert("団体IDを入力してください");
+      }
+    }
+  </script>
+</body>
+</html>
