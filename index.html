@@ -1,79 +1,385 @@
+```html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>学祭運営オンラインポータル</title>
+
+  <title>学園祭実行委員会 統合管理システム</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
-    body { font-family: sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
-    .hero { background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 60px 20px; text-align: center; }
-    .hero h1 { margin: 0 0 10px 0; font-size: 2.2em; }
-    .container { max-width: 800px; margin: -30px auto 40px; padding: 0 20px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
-    .card { background: white; padding: 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; }
-    .card h3 { margin-top: 0; color: #333; }
-    .card p { color: #666; font-size: 0.9em; min-height: 40px; }
-    .btn { display: inline-block; width: 100%; padding: 12px 0; background: #007bff; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; box-sizing: border-box; }
-    .btn-admin { background: #343a40; }
-    .btn-user { background: #28a745; }
-    .search-box { margin-top: 15px; }
-    .search-box input { padding: 8px; width: 60%; border: 1px solid #ccc; border-radius: 4px; }
-    .search-box button { padding: 8px 12px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    body {
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Noto Sans JP",
+        sans-serif;
+    }
+
+    .card {
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.12);
+    }
   </style>
 </head>
-<body>
 
-  <div class="hero">
-    <h1>学祭運営管理ポータル</h1>
-    <p>団体登録・メンバー追加・各種書類申請を一元管理します</p>
-  </div>
+<body class="bg-slate-100 text-slate-800 min-h-screen">
 
-  <div class="container">
-    <div class="grid">
-      
-      <!-- 代表者用 -->
-      <div class="card">
-        <h3>🎪 出展団体をつくる</h3>
-        <p>学祭に新規出展する団体の代表者はこちらから初回登録を行ってください。</p>
-        <a href="register-org.html" class="btn">新規団体登録</a>
-      </div>
+  <!-- ヘッダー -->
+  <header class="bg-indigo-700 text-white">
 
-      <!-- メンバー用 -->
-      <div class="card">
-        <h3>👤 メンバー参加 / マイページ</h3>
-        <p>招待コードをお持ちの方、個人申請（調理責任者講習等）を行う方はこちら。</p>
-        <a href="user.html" class="btn btn-user">個人マイページへ</a>
-      </div>
+    <div class="max-w-6xl mx-auto px-5 py-6">
 
-      <!-- 運営用 -->
-      <div class="card">
-        <h3>⚙️ 運営本部 管理ポータル</h3>
-        <p>学祭実行委員会用の管理画面です。（申請管理・名簿検索・フォーム作成）</p>
-        <a href="admin.html" class="btn btn-admin">管理画面を開く</a>
+      <div class="flex flex-col md:flex-row
+                  md:items-center md:justify-between gap-3">
+
+        <div>
+
+          <h1 class="text-2xl md:text-3xl font-bold">
+            学園祭実行委員会
+          </h1>
+
+          <p class="text-indigo-200 mt-1">
+            統合管理システム
+          </p>
+
+        </div>
+
+        <div class="text-sm text-indigo-200">
+          Festival Management System
+        </div>
+
       </div>
 
     </div>
 
-    <!-- 団体ページダイレクトアクセス -->
-    <div class="card" style="margin-top:20px;">
-      <h3>🔍 登録済み団体ページの表示</h3>
-      <p>発行された「団体ID（例: ORG-XXXXXX）」を入力して直接ダッシュボードを開きます。</p>
-      <div class="search-box">
-        <input type="text" id="direct-org-id" placeholder="団体IDを入力">
-        <button onclick="openOrgPage()">団体ページへ</button>
-      </div>
-    </div>
-  </div>
+  </header>
 
-  <script>
-    function openOrgPage() {
-      const id = document.getElementById('direct-org-id').value.trim();
-      if (id) {
-        window.location.href = `group.html?org_id=${encodeURIComponent(id)}`;
-      } else {
-        alert("団体IDを入力してください");
-      }
-    }
-  </script>
+
+  <!-- メイン -->
+  <main class="max-w-6xl mx-auto px-5 py-10">
+
+
+    <!-- ウェルカム -->
+    <section class="text-center mb-10">
+
+      <div class="inline-flex items-center
+                  justify-center
+                  w-16 h-16
+                  rounded-2xl
+                  bg-indigo-100
+                  text-indigo-700
+                  text-3xl
+                  mb-5">
+        🎓
+      </div>
+
+      <h2 class="text-3xl md:text-4xl font-bold">
+        学園祭実行委員会
+        <br class="md:hidden">
+        統合管理システム
+      </h2>
+
+      <p class="mt-4 text-slate-500 max-w-2xl mx-auto">
+        団体・個人の各種申請、提出書類の確認、
+        審査状況の確認などを行うことができます。
+      </p>
+
+    </section>
+
+
+    <!-- ログイン選択 -->
+    <section class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+
+
+      <!-- 団体 -->
+      <a href="group.html"
+         class="card block bg-white rounded-3xl
+                p-7 shadow-sm border border-slate-200">
+
+        <div class="flex items-start gap-5">
+
+          <div class="flex-shrink-0
+                      w-16 h-16
+                      rounded-2xl
+                      bg-indigo-100
+                      flex items-center justify-center
+                      text-3xl">
+            🏫
+          </div>
+
+          <div>
+
+            <p class="text-sm text-indigo-600 font-bold mb-1">
+              ORGANIZATION
+            </p>
+
+            <h3 class="text-2xl font-bold">
+              団体マイページ
+            </h3>
+
+            <p class="text-slate-500 mt-2 leading-relaxed">
+              団体登録、団体情報の確認、
+              メンバー追加、団体向け申請などを行います。
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="mt-6
+                    flex items-center justify-between
+                    text-indigo-600 font-bold">
+
+          <span>
+            団体ページへ
+          </span>
+
+          <span class="text-xl">
+            →
+          </span>
+
+        </div>
+
+      </a>
+
+
+      <!-- 個人 -->
+      <a href="user.html"
+         class="card block bg-white rounded-3xl
+                p-7 shadow-sm border border-slate-200">
+
+        <div class="flex items-start gap-5">
+
+          <div class="flex-shrink-0
+                      w-16 h-16
+                      rounded-2xl
+                      bg-emerald-100
+                      flex items-center justify-center
+                      text-3xl">
+            👤
+          </div>
+
+          <div>
+
+            <p class="text-sm text-emerald-600 font-bold mb-1">
+              INDIVIDUAL
+            </p>
+
+            <h3 class="text-2xl font-bold">
+              個人マイページ
+            </h3>
+
+            <p class="text-slate-500 mt-2 leading-relaxed">
+              代表者から発行されたユーザーIDを使用して、
+              個人向け申請や提出書類を管理します。
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="mt-6
+                    flex items-center justify-between
+                    text-emerald-600 font-bold">
+
+          <span>
+            個人ページへ
+          </span>
+
+          <span class="text-xl">
+            →
+          </span>
+
+        </div>
+
+      </a>
+
+    </section>
+
+
+    <!-- 案内 -->
+    <section class="max-w-4xl mx-auto mt-8">
+
+      <div class="bg-white rounded-3xl
+                  border border-slate-200
+                  p-6 md:p-7">
+
+        <h3 class="font-bold text-lg mb-5">
+          ご利用について
+        </h3>
+
+
+        <div class="space-y-4">
+
+
+          <div class="flex gap-4">
+
+            <div class="flex-shrink-0
+                        w-9 h-9
+                        rounded-full
+                        bg-indigo-100
+                        text-indigo-700
+                        flex items-center justify-center
+                        font-bold">
+              1
+            </div>
+
+            <div>
+
+              <p class="font-bold">
+                団体として利用する場合
+              </p>
+
+              <p class="text-sm text-slate-500 mt-1">
+                団体代表者は「団体マイページ」から
+                新規登録またはログインしてください。
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="flex gap-4">
+
+            <div class="flex-shrink-0
+                        w-9 h-9
+                        rounded-full
+                        bg-emerald-100
+                        text-emerald-700
+                        flex items-center justify-center
+                        font-bold">
+              2
+            </div>
+
+            <div>
+
+              <p class="font-bold">
+                個人として利用する場合
+              </p>
+
+              <p class="text-sm text-slate-500 mt-1">
+                団体代表者から発行された
+                ユーザーIDとパスワードで
+                「個人マイページ」にログインしてください。
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="flex gap-4">
+
+            <div class="flex-shrink-0
+                        w-9 h-9
+                        rounded-full
+                        bg-amber-100
+                        text-amber-700
+                        flex items-center justify-center
+                        font-bold">
+              3
+            </div>
+
+            <div>
+
+              <p class="font-bold">
+                申請について
+              </p>
+
+              <p class="text-sm text-slate-500 mt-1">
+                申請後は運営による審査が行われます。
+                差戻しとなった場合は、理由を確認して
+                修正・再提出してください。
+              </p>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- 管理者 -->
+    <section class="max-w-4xl mx-auto mt-6">
+
+      <div class="bg-slate-800 rounded-3xl
+                  p-5 md:p-6
+                  text-white
+                  flex flex-col md:flex-row
+                  md:items-center
+                  md:justify-between
+                  gap-4">
+
+        <div>
+
+          <p class="font-bold">
+            運営関係者の方
+          </p>
+
+          <p class="text-sm text-slate-400 mt-1">
+            管理者認証が必要です。
+          </p>
+
+        </div>
+
+        <a href="admin.html"
+           class="inline-flex items-center
+                  justify-center
+                  bg-white text-slate-800
+                  px-5 py-3
+                  rounded-xl
+                  font-bold
+                  hover:bg-slate-100
+                  transition">
+
+          運営管理画面
+          <span class="ml-2">→</span>
+
+        </a>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+
+  <!-- フッター -->
+  <footer class="border-t bg-white mt-10">
+
+    <div class="max-w-6xl mx-auto
+                px-5 py-6
+                text-center">
+
+      <p class="text-sm text-slate-400">
+        学園祭実行委員会 統合管理システム
+      </p>
+
+    </div>
+
+  </footer>
+
+
 </body>
 </html>
+```
