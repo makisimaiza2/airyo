@@ -1,108 +1,990 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>団体ダッシュボード | 学祭運営ポータル</title>
-  <style>
-    body { font-family: sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
-    .container { max-width: 700px; margin: 0 auto; }
-    .card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
-    h2, h3 { margin-top: 0; color: #333; }
-    .invite-box { background: #e8f0fe; border-left: 4px solid #1a73e8; padding: 12px; margin-top: 10px; word-break: break-all; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border-bottom: 1px solid #ddd; padding: 10px; text-align: left; }
-    th { background-color: #f8f9fa; }
-    .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; background: #e0e0e0; }
-    .badge-rep { background: #ffd700; color: #333; font-weight: bold; }
-  </style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>学園祭実行委員会 - 団体マイページ</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
 </head>
-<body>
 
-  <div class="container">
-    <div class="card">
-      <h2 id="org-name">読み込み中...</h2>
-      <p><strong>出展区分:</strong> <span id="org-cat">-</span></p>
-      <p><strong>代表者:</strong> <span id="org-rep">-</span></p>
-    </div>
+<body class="bg-slate-100 text-slate-800">
 
-    <div class="card">
-      <h3>👥 メンバー招待・追加</h3>
-      <p>以下の団体IDまたは招待用URLを新規メンバーに共有してください。</p>
-      <div class="invite-box">
-        <strong>団体ID:</strong> <span id="invite-org-id" style="font-size:1.1em; color:#1a73e8;">-</span><br>
-        <strong>招待URL:</strong> <span id="invite-url">-</span>
-      </div>
-    </div>
+<header class="bg-indigo-700 text-white">
+  <div class="max-w-5xl mx-auto px-4 py-5">
 
-    <div class="card">
-      <h3>📋 所属メンバー一覧 (<span id="member-count">0</span>名)</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>氏名</th>
-            <th>メールアドレス</th>
-            <th>役割</th>
-          </tr>
-        </thead>
-        <tbody id="member-list">
-          <tr><td colspan="3">読み込み中...</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <h1 class="text-2xl font-bold">
+      学園祭実行委員会
+    </h1>
+
+    <p class="text-indigo-200">
+      団体マイページ
+    </p>
+
+  </div>
+</header>
+
+
+<main class="max-w-5xl mx-auto p-4 md:p-8">
+
+
+<!-- 認証 -->
+<section id="auth">
+
+  <div class="flex gap-2 mb-5">
+
+    <button onclick="authTab('login')"
+            class="authBtn bg-indigo-600 text-white px-4 py-2 rounded-xl">
+      ログイン
+    </button>
+
+    <button onclick="authTab('register')"
+            class="authBtn bg-white px-4 py-2 rounded-xl">
+      新規団体登録
+    </button>
+
+    <button onclick="authTab('recover')"
+            class="authBtn bg-white px-4 py-2 rounded-xl">
+      IDをお忘れの方
+    </button>
+
   </div>
 
-  <script>
-    // ★ご自身のGASデプロイURLに書き換えてください★
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx7gn6UibMj5JzjjfNcr3FcQpyAv2V0fX4FXNbv3pb9r1L5C5e7n1fTcAn5GNHg8PZu/exec";
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const orgId = urlParams.get('org_id');
+  <!-- ログイン -->
+  <div id="auth-login"
+       class="bg-white rounded-2xl shadow p-6">
 
-    if (!orgId) {
-      alert("団体IDが指定されていません。");
-    } else {
-      loadOrgData();
-    }
+    <h2 class="text-xl font-bold mb-5">
+      団体ログイン
+    </h2>
 
-    async function loadOrgData() {
-      try {
-        const response = await fetch(`${GAS_API_URL}?action=getOrgDetails&org_id=${encodeURIComponent(orgId)}`);
-        const data = await response.json();
+    <input id="loginOrgId"
+           placeholder="団体ID（ORG-XXXXXXXX）"
+           class="w-full border rounded-xl p-3 mb-3">
 
-        if (data.status === 'success') {
-          const org = data.organization;
-          document.getElementById('org-name').textContent = org.org_name;
-          document.getElementById('org-cat').textContent = org.category;
-          document.getElementById('org-rep').textContent = `${org.rep_name} (${org.rep_email})`;
+    <input id="loginPassword"
+           type="password"
+           placeholder="パスワード"
+           class="w-full border rounded-xl p-3 mb-4">
 
-          document.getElementById('invite-org-id').textContent = org.org_id;
-          const joinUrl = `${window.location.origin}${window.location.pathname.replace('group.html', 'user.html')}?join=${org.org_id}`;
-          document.getElementById('invite-url').textContent = joinUrl;
+    <button onclick="login()"
+            class="bg-indigo-600 text-white rounded-xl px-6 py-3">
+      ログイン
+    </button>
 
-          // メンバー一覧レンダリング
-          const memberListEl = document.getElementById('member-list');
-          memberListEl.innerHTML = '';
-          document.getElementById('member-count').textContent = data.members.length;
+    <p id="loginMsg"
+       class="mt-3 text-sm"></p>
 
-          data.members.forEach(m => {
-            const tr = document.createElement('tr');
-            const isRep = m.role === '代表者';
-            tr.innerHTML = `
-              <td>${m.user_name}</td>
-              <td>${m.email}</td>
-              <td><span class="badge ${isRep ? 'badge-rep' : ''}">${m.role}</span></td>
-            `;
-            memberListEl.appendChild(tr);
-          });
+  </div>
 
-        } else {
-          alert('団体情報の取得に失敗しました: ' + data.message);
+
+  <!-- 登録 -->
+  <div id="auth-register"
+       class="hidden bg-white rounded-2xl shadow p-6">
+
+    <h2 class="text-xl font-bold mb-5">
+      新規団体登録
+    </h2>
+
+    <div class="grid md:grid-cols-2 gap-3">
+
+      <input id="regOrgName"
+             placeholder="団体名"
+             class="border rounded-xl p-3">
+
+      <input id="regCategory"
+             placeholder="カテゴリー"
+             class="border rounded-xl p-3">
+
+      <input id="regRepName"
+             placeholder="代表者名"
+             class="border rounded-xl p-3">
+
+      <input id="regEmail"
+             type="email"
+             placeholder="代表者メール"
+             class="border rounded-xl p-3">
+
+      <input id="regPassword"
+             type="password"
+             placeholder="パスワード（6文字以上）"
+             class="border rounded-xl p-3">
+
+    </div>
+
+    <button onclick="registerOrg()"
+            class="mt-5 bg-indigo-600 text-white rounded-xl px-6 py-3">
+      団体登録
+    </button>
+
+    <div id="registerResult"
+         class="mt-4"></div>
+
+  </div>
+
+
+  <!-- ID照会 -->
+  <div id="auth-recover"
+       class="hidden bg-white rounded-2xl shadow p-6">
+
+    <h2 class="text-xl font-bold mb-5">
+      団体ID照会
+    </h2>
+
+    <input id="recoverEmail"
+           type="email"
+           placeholder="代表者メールアドレス"
+           class="w-full border rounded-xl p-3 mb-4">
+
+    <button onclick="recoverOrg()"
+            class="bg-indigo-600 text-white rounded-xl px-6 py-3">
+      IDを照会
+    </button>
+
+    <div id="recoverResult"
+         class="mt-4"></div>
+
+  </div>
+
+</section>
+
+
+<!-- マイページ -->
+<section id="mypage"
+         class="hidden">
+
+
+  <div class="flex justify-between items-center mb-6">
+
+    <div>
+      <h2 id="orgTitle"
+          class="text-2xl font-bold"></h2>
+
+      <p id="orgIdText"
+         class="text-sm text-slate-500"></p>
+    </div>
+
+    <button onclick="logout()"
+            class="bg-white border px-4 py-2 rounded-xl">
+      ログアウト
+    </button>
+
+  </div>
+
+
+  <!-- 基本情報 -->
+  <div class="bg-white rounded-2xl shadow p-6 mb-6">
+
+    <h3 class="font-bold text-lg mb-4">
+      団体基本情報
+    </h3>
+
+    <div id="orgInfo"
+         class="grid md:grid-cols-2 gap-3"></div>
+
+  </div>
+
+
+  <!-- メンバー -->
+  <div class="bg-white rounded-2xl shadow p-6 mb-6">
+
+    <h3 class="font-bold text-lg mb-4">
+      メンバー追加・アカウント発行
+    </h3>
+
+    <div class="grid md:grid-cols-2 gap-3">
+
+      <input id="memberName"
+             placeholder="メンバー氏名"
+             class="border rounded-xl p-3">
+
+      <input id="memberEmail"
+             type="email"
+             placeholder="メールアドレス"
+             class="border rounded-xl p-3">
+
+      <input id="memberRole"
+             placeholder="役割"
+             class="border rounded-xl p-3">
+
+      <input id="memberPassword"
+             type="password"
+             placeholder="個別パスワード"
+             class="border rounded-xl p-3">
+
+    </div>
+
+    <button onclick="addMember()"
+            class="mt-4 bg-indigo-600 text-white px-5 py-3 rounded-xl">
+      アカウント発行
+    </button>
+
+    <div id="newUserResult"
+         class="mt-4"></div>
+
+
+    <h4 class="font-bold mt-8 mb-3">
+      所属メンバー
+    </h4>
+
+    <div id="memberList"></div>
+
+  </div>
+
+
+  <!-- フォーム -->
+  <div class="bg-white rounded-2xl shadow p-6">
+
+    <div class="flex justify-between items-center mb-5">
+
+      <h3 class="font-bold text-lg">
+        団体宛て申請フォーム
+      </h3>
+
+      <button onclick="loadData()"
+              class="border px-4 py-2 rounded-xl">
+        更新
+      </button>
+
+    </div>
+
+    <div id="forms"
+         class="space-y-6"></div>
+
+  </div>
+
+</section>
+
+</main>
+
+
+<script>
+
+const API_URL =
+  'https://script.google.com/macros/s/AKfycbx7gn6UibMj5JzjjfNcr3FcQpyAv2V0fX4FXNbv3pb9r1L5C5e7n1fTcAn5GNHg8PZu/exec';
+
+let token = '';
+let organization = null;
+let editingSubId = null;
+
+
+async function api(action, data = {}) {
+
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8'
+    },
+    body: JSON.stringify({
+      action,
+      ...data
+    })
+  });
+
+  const result = await response.json();
+
+  if (!result.success) {
+    throw new Error(result.error || 'APIエラー');
+  }
+
+  return result;
+}
+
+
+function authTab(tab) {
+
+  ['login', 'register', 'recover']
+    .forEach(function(x) {
+
+      document
+        .getElementById('auth-' + x)
+        .classList.toggle('hidden', x !== tab);
+
+    });
+
+}
+
+
+async function login() {
+
+  const msg =
+    document.getElementById('loginMsg');
+
+  try {
+
+    const result =
+      await api(
+        'loginOrganization',
+        {
+          org_id:
+            document.getElementById('loginOrgId').value,
+
+          password:
+            document.getElementById('loginPassword').value
         }
-      } catch (err) {
-        alert('通信エラーが発生しました: ' + err);
-      }
+      );
+
+    token = result.token;
+
+    document
+      .getElementById('auth')
+      .classList.add('hidden');
+
+    document
+      .getElementById('mypage')
+      .classList.remove('hidden');
+
+    await loadData();
+
+  } catch (e) {
+
+    msg.textContent = e.message;
+    msg.className = 'mt-3 text-sm text-red-600';
+
+  }
+}
+
+
+async function registerOrg() {
+
+  try {
+
+    const result =
+      await api(
+        'registerOrganization',
+        {
+          org_name:
+            document.getElementById('regOrgName').value,
+
+          category:
+            document.getElementById('regCategory').value,
+
+          rep_name:
+            document.getElementById('regRepName').value,
+
+          rep_email:
+            document.getElementById('regEmail').value,
+
+          password:
+            document.getElementById('regPassword').value
+        }
+      );
+
+    document.getElementById('registerResult').innerHTML = `
+
+      <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+
+        <p class="font-bold text-green-700">
+          登録が完了しました。
+        </p>
+
+        <p class="mt-2">
+          団体ID：
+          <strong>${esc(result.org_id)}</strong>
+        </p>
+
+        <p>
+          代表者ユーザーID：
+          <strong>${esc(result.user_id)}</strong>
+        </p>
+
+        <p class="text-sm mt-3">
+          このIDと登録時のパスワードを大切に保管してください。
+        </p>
+
+      </div>
+    `;
+
+  } catch (e) {
+
+    document.getElementById('registerResult').innerHTML =
+      `<p class="text-red-600">${esc(e.message)}</p>`;
+
+  }
+}
+
+
+async function recoverOrg() {
+
+  try {
+
+    const result =
+      await api(
+        'recoverOrgId',
+        {
+          email:
+            document.getElementById('recoverEmail').value
+        }
+      );
+
+    document.getElementById('recoverResult').innerHTML = `
+
+      <div class="bg-green-50 rounded-xl p-4">
+        団体名：
+        <strong>${esc(result.org_name)}</strong>
+        <br>
+        団体ID：
+        <strong>${esc(result.org_id)}</strong>
+      </div>
+
+    `;
+
+  } catch (e) {
+
+    document.getElementById('recoverResult').innerHTML =
+      `<p class="text-red-600">${esc(e.message)}</p>`;
+
+  }
+}
+
+
+async function loadData() {
+
+  const orgResult =
+    await api(
+      'getOrgDetails',
+      { token }
+    );
+
+  organization = orgResult.organization;
+
+  document.getElementById('orgTitle').textContent =
+    organization.org_name;
+
+  document.getElementById('orgIdText').textContent =
+    organization.org_id;
+
+  document.getElementById('orgInfo').innerHTML = `
+
+    <div>
+      <span class="font-bold">団体名：</span>
+      ${esc(organization.org_name)}
+    </div>
+
+    <div>
+      <span class="font-bold">カテゴリー：</span>
+      ${esc(organization.category)}
+    </div>
+
+    <div>
+      <span class="font-bold">代表者：</span>
+      ${esc(organization.rep_name)}
+    </div>
+
+    <div>
+      <span class="font-bold">代表者メール：</span>
+      ${esc(organization.rep_email)}
+    </div>
+
+  `;
+
+
+  document.getElementById('memberList').innerHTML =
+    orgResult.users.map(function(u) {
+
+      return `
+
+        <div class="border rounded-xl p-4 mb-2">
+
+          <div class="font-bold">
+            ${esc(u.user_name)}
+          </div>
+
+          <div class="text-sm text-slate-500">
+            ユーザーID：${esc(u.user_id)}
+          </div>
+
+          <div class="text-sm">
+            ${esc(u.role)} ／ ${esc(u.email)}
+          </div>
+
+        </div>
+
+      `;
+
+    }).join('');
+
+
+  const forms =
+    await api(
+      'getFormsForTarget',
+      { token }
+    );
+
+  renderForms(forms.forms);
+}
+
+
+async function addMember() {
+
+  try {
+
+    const result =
+      await api(
+        'addUser',
+        {
+          token,
+
+          user_name:
+            document.getElementById('memberName').value,
+
+          email:
+            document.getElementById('memberEmail').value,
+
+          role:
+            document.getElementById('memberRole').value,
+
+          password:
+            document.getElementById('memberPassword').value
+        }
+      );
+
+    document.getElementById('newUserResult').innerHTML = `
+
+      <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+
+        <p class="font-bold text-green-700">
+          アカウントを発行しました。
+        </p>
+
+        <p>
+          ユーザーID：
+          <strong>${esc(result.user_id)}</strong>
+        </p>
+
+      </div>
+
+    `;
+
+    await loadData();
+
+  } catch (e) {
+
+    document.getElementById('newUserResult').innerHTML =
+      `<p class="text-red-600">${esc(e.message)}</p>`;
+
+  }
+}
+
+
+function renderForms(forms) {
+
+  const container =
+    document.getElementById('forms');
+
+  if (!forms.length) {
+
+    container.innerHTML =
+      '<p class="text-slate-500">現在、申請フォームはありません。</p>';
+
+    return;
+  }
+
+  container.innerHTML =
+    forms.map(function(form) {
+
+      const sub = form.submission;
+
+      const disabled =
+        form.deadline_passed &&
+        !(sub && sub.status === '差戻し');
+
+      const values =
+        sub ? sub.data || {} : {};
+
+      return `
+
+      <div class="border rounded-2xl p-5">
+
+        <div class="flex flex-wrap justify-between gap-3">
+
+          <div>
+
+            <h4 class="text-xl font-bold">
+              ${esc(form.title)}
+            </h4>
+
+            <p class="text-sm text-slate-500">
+              締切：${esc(form.deadline)}
+            </p>
+
+          </div>
+
+
+          ${
+            sub
+            ? `
+              <span class="px-3 py-1 rounded-full text-sm
+                ${
+                  sub.status === '承認'
+                    ? 'bg-green-100 text-green-700'
+                    : sub.status === '差戻し'
+                      ? 'bg-red-100 text-red-700'
+                      : 'bg-yellow-100 text-yellow-700'
+                }">
+                ${esc(sub.status)}
+              </span>
+            `
+            : ''
+          }
+
+        </div>
+
+
+        ${
+          sub && sub.comment
+          ? `
+            <div class="bg-red-50 text-red-700 p-4 rounded-xl mt-4">
+              <strong>差戻し理由</strong><br>
+              ${esc(sub.comment)}
+            </div>
+          `
+          : ''
+        }
+
+
+        ${
+          sub && sub.generated_pdf_url
+          ? `
+            <a href="${esc(sub.generated_pdf_url)}"
+               target="_blank"
+               class="inline-block mt-4 bg-indigo-600 text-white px-5 py-3 rounded-xl">
+              📄 申請書PDFをダウンロード（教員署名用）
+            </a>
+          `
+          : ''
+        }
+
+
+        ${
+          sub && sub.status === '差戻し'
+          ? `
+            <button onclick="editSubmission('${esc(form.form_id)}','${esc(sub.sub_id)}')"
+                    class="ml-2 bg-orange-500 text-white px-5 py-3 rounded-xl">
+              修正・再提出
+            </button>
+          `
+          : ''
+        }
+
+
+        ${
+          disabled
+          ? `
+            <div class="mt-5 bg-slate-100 p-4 rounded-xl">
+              このフォームは締切を過ぎています。
+            </div>
+          `
+          : renderFormFields(form, values)
+        }
+
+      </div>
+
+      `;
+
+    }).join('');
+}
+
+
+function renderFormFields(form, values) {
+
+  return `
+
+    <form class="mt-6"
+          onsubmit="submitApplication(event,'${esc(form.form_id)}')">
+
+      <div class="space-y-4">
+
+        ${form.fields.map(function(field) {
+
+          const value =
+            values[field.key] ?? '';
+
+          if (field.type === 'textarea') {
+
+            return `
+
+              <div>
+                <label class="font-bold text-sm">
+                  ${esc(field.label)}
+                  ${field.required ? ' *' : ''}
+                </label>
+
+                <textarea
+                  name="${esc(field.key)}"
+                  ${field.required ? 'required' : ''}
+                  class="w-full border rounded-xl p-3 mt-1"
+                  rows="4">${esc(value)}</textarea>
+
+              </div>
+
+            `;
+
+          }
+
+
+          if (field.type === 'select') {
+
+            return `
+
+              <div>
+
+                <label class="font-bold text-sm">
+                  ${esc(field.label)}
+                  ${field.required ? ' *' : ''}
+                </label>
+
+                <select
+                  name="${esc(field.key)}"
+                  ${field.required ? 'required' : ''}
+                  class="w-full border rounded-xl p-3 mt-1">
+
+                  <option value="">選択してください</option>
+
+                  ${(field.options || []).map(function(o) {
+
+                    return `
+                      <option value="${esc(o)}"
+                        ${String(value) === String(o) ? 'selected' : ''}>
+                        ${esc(o)}
+                      </option>
+                    `;
+
+                  }).join('')}
+
+                </select>
+
+              </div>
+
+            `;
+
+          }
+
+
+          if (field.type === 'checkbox') {
+
+            return `
+
+              <label class="flex items-center gap-2">
+
+                <input type="checkbox"
+                       name="${esc(field.key)}"
+                       ${value ? 'checked' : ''}
+                       class="w-5 h-5">
+
+                ${esc(field.label)}
+
+              </label>
+
+            `;
+
+          }
+
+
+          return `
+
+            <div>
+
+              <label class="font-bold text-sm">
+                ${esc(field.label)}
+                ${field.required ? ' *' : ''}
+              </label>
+
+              <input
+                type="${esc(field.type)}"
+                name="${esc(field.key)}"
+                value="${esc(value)}"
+                ${field.required ? 'required' : ''}
+                class="w-full border rounded-xl p-3 mt-1">
+
+            </div>
+
+          `;
+
+        }).join('')}
+
+
+        <div>
+
+          <label class="font-bold text-sm">
+            添付ファイル
+          </label>
+
+          <input type="file"
+                 class="file-input mt-1 w-full border rounded-xl p-3">
+
+          <p class="text-xs text-slate-500 mt-1">
+            最大10MB
+          </p>
+
+        </div>
+
+
+        <button
+          type="submit"
+          class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold">
+
+          ${editingSubId ? '修正して再提出' : '申請を提出'}
+
+        </button>
+
+      </div>
+
+    </form>
+
+  `;
+}
+
+
+function editSubmission(formId, subId) {
+
+  editingSubId = subId;
+
+  const el =
+    [...document.querySelectorAll('#forms > div')]
+      .find(x => x.innerHTML.includes(formId));
+
+  if (el) {
+    el.scrollIntoView({
+      behavior: 'smooth'
+    });
+  }
+
+  alert('フォームを修正して再提出してください。');
+
+}
+
+
+async function submitApplication(event, formId) {
+
+  event.preventDefault();
+
+  const form =
+    event.target;
+
+  const data = {};
+
+  form.querySelectorAll('[name]').forEach(function(el) {
+
+    if (el.type === 'checkbox') {
+      data[el.name] = el.checked;
+    } else {
+      data[el.name] = el.value;
     }
-  </script>
+
+  });
+
+
+  let file = null;
+
+  const fileInput =
+    form.querySelector('.file-input');
+
+  if (
+    fileInput &&
+    fileInput.files &&
+    fileInput.files.length
+  ) {
+
+    const f =
+      fileInput.files[0];
+
+    if (f.size > 10 * 1024 * 1024) {
+      alert('ファイルは10MB以下にしてください。');
+      return;
+    }
+
+    file = await readFile(f);
+  }
+
+
+  try {
+
+    await api(
+      'submitForm',
+      {
+        token,
+        form_id: formId,
+        sub_id: editingSubId || '',
+        data,
+        file
+      }
+    );
+
+    editingSubId = null;
+
+    alert('申請を提出しました。');
+
+    await loadData();
+
+  } catch (e) {
+
+    alert(e.message);
+
+  }
+}
+
+
+function readFile(file) {
+
+  return new Promise(function(resolve, reject) {
+
+    const reader =
+      new FileReader();
+
+    reader.onload = function() {
+
+      const base64 =
+        reader.result.split(',')[1];
+
+      resolve({
+        name: file.name,
+        mimeType: file.type,
+        base64
+      });
+
+    };
+
+    reader.onerror = reject;
+
+    reader.readAsDataURL(file);
+
+  });
+
+}
+
+
+function logout() {
+
+  token = '';
+
+  document
+    .getElementById('mypage')
+    .classList.add('hidden');
+
+  document
+    .getElementById('auth')
+    .classList.remove('hidden');
+
+}
+
+
+function esc(value) {
+
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+
+}
+
+</script>
+
 </body>
 </html>
