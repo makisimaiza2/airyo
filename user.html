@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>個人マイページ | 学祭運営ポータル</title>
+  <style>
+    body { font-family: sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+    .card { max-width: 500px; margin: 20px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h2, h3 { color: #333; margin-top: 0; }
+    label { display: block; margin-top: 12px; font-weight: bold; color: #555; }
+    input, select { width: 100%; padding: 10px; margin-top: 6px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+    button { width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 4px; font-size: 16px; margin-top: 20px; cursor: pointer; }
+    button:hover { background-color: #218838; }
+    .hidden { display: none; }
+    .task-item { border-left: 4px solid #ffc107; background: #fff3cd; padding: 12px; margin-top: 10px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <!-- 初回メンバー登録フォーム -->
+  <div class="card" id="join-card">
+    <h2>新規メンバー 参加登録</h2>
+    <form id="join-form">
+      <label>参加する団体ID（コード）</label>
+      <input type="text" id="org_id" required placeholder="例: ORG-A1B2C3">
+
+      <label>氏名</label>
+      <input type="text" id="user_name" required placeholder="例: 花子 花子">
+
+      <label>メールアドレス</label>
+      <input type="email" id="email" required placeholder="例: hanako@example.com">
+
+      <label>団体内での役割</label>
+      <select id="role">
+        <option value="一般メンバー">一般メンバー</option>
+        <option value="調理担当者">調理担当者</option>
+        <option value="会計担当">会計担当</option>
+      </select>
+
+      <button type="submit" id="join-btn">団体に参加登録する</button>
+    </form>
+  </div>
+
+  <!-- 個人マイページ画面 -->
+  <div class="card hidden" id="user-page">
+    <h2>👤 個人マイページ</h2>
+    <p>ようこそ、<strong id="display-user-name">-</strong> さん</p>
+    
+    <hr>
+
+    <h3>📝 あなたへの要対応アイテム（個人申請）</h3>
+    <div class="task-item">
+      <strong>【要提出】調理責任者 資格証明の提出</strong>
+      <p style="font-size:0.9em; margin: 4px 0;">模擬店で調理を行う方は講習受講証のアップロードが必要です。</p>
+      <button style="margin-top:8px; padding:6px 12px; font-size:14px; width:auto; background:#1a73e8;" onclick="alert('次回申請機能追加時に対応可能です！')">申請画面を開く</button>
+    </div>
+  </div>
+
+  <script>
+    // ★ご自身のGASデプロイURLに書き換えてください★
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx7gn6UibMj5JzjjfNcr3FcQpyAv2V0fX4FXNbv3pb9r1L5C5e7n1fTcAn5GNHg8PZu/exec";
+
+    // URLの ?join=ORG-XXXX から自動入力
+    const urlParams = new URLSearchParams(window.location.search);
+    const joinOrgId = urlParams.get('join');
+    if (joinOrgId) {
+      document.getElementById('org_id').value = joinOrgId;
+    }
+
+    document.getElementById('join-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('join-btn');
+      btn.disabled = true;
+      btn.textContent = "登録処理中...";
+
+      const payload = {
+        action: 'addUser',
+        org_id: document.getElementById('org_id').value,
+        user_name: document.getElementById('user_name').value,
+        email: document.getElementById('email').value,
+        role: document.getElementById('role').value
+      };
+
+      try {
+        const response = await fetch(GAS_API_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          document.getElementById('display-user-name').textContent = document.getElementById('user_name').value;
+          document.getElementById('join-card').classList.add('hidden');
+          document.getElementById('user-page').classList.remove('hidden');
+        } else {
+          alert('エラー: ' + result.message);
+          btn.disabled = false;
+          btn.textContent = "団体に参加登録する";
+        }
+      } catch (err) {
+        alert('通信エラーが発生しました: ' + err);
+        btn.disabled = false;
+        btn.textContent = "団体に参加登録する";
+      }
+    });
+  </script>
+</body>
+</html>
