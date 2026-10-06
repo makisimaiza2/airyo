@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>団体初回登録 | 学祭運営ポータル</title>
+  <style>
+    body { font-family: sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+    .card { max-width: 500px; margin: 20px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h2 { color: #333; margin-top: 0; }
+    label { display: block; margin-top: 12px; font-weight: bold; color: #555; }
+    input, select { width: 100%; padding: 10px; margin-top: 6px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+    button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; font-size: 16px; margin-top: 20px; cursor: pointer; }
+    button:hover { background-color: #0056b3; }
+    .success-box { background: #e6f4ea; border: 1px solid #34a853; padding: 16px; border-radius: 6px; margin-top: 20px; word-break: break-all; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="card" id="form-card">
+    <h2>学祭 団体初回登録</h2>
+    <form id="reg-form">
+      <label>団体名（屋号・サークル名など）</label>
+      <input type="text" id="org_name" required placeholder="例: たこ焼き「タコパラ」">
+
+      <label>出展区分</label>
+      <select id="category" required>
+        <option value="">選択してください</option>
+        <option value="模擬店（屋内調理あり）">模擬店（屋内調理あり）</option>
+        <option value="模擬店（屋外調理あり）">模擬店（屋外調理あり）</option>
+        <option value="展示・発表">展示・発表</option>
+        <option value="ステージ出演">ステージ出演</option>
+      </select>
+
+      <label>代表者 氏名</label>
+      <input type="text" id="rep_name" required placeholder="例: 学祭 太郎">
+
+      <label>代表者 メールアドレス</label>
+      <input type="email" id="rep_email" required placeholder="例: taro@example.com">
+
+      <label>代表者 電話番号</label>
+      <input type="tel" id="rep_phone" required placeholder="例: 090-1234-5678">
+
+      <button type="submit" id="submit-btn">団体を登録する</button>
+    </form>
+  </div>
+
+  <div class="card hidden" id="result-card">
+    <h2>🎉 団体登録が完了しました！</h2>
+    <div class="success-box">
+      <p><strong>あなたの団体ID:</strong> <span id="res-org-id" style="font-size: 1.2em; color: #1a73e8; font-weight: bold;"></span></p>
+      <hr>
+      <p><strong>【メンバー招待用URL】</strong><br>メンバーに以下のURLを共有して参加登録してもらってください：</p>
+      <p id="res-join-url" style="color: #007bff;"></p>
+    </div>
+    <button onclick="goToGroupPage()">団体ページを開く</button>
+  </div>
+
+  <script>
+    // ★ご自身のGASデプロイURLに書き換えてください★
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx7gn6UibMj5JzjjfNcr3FcQpyAv2V0fX4FXNbv3pb9r1L5C5e7n1fTcAn5GNHg8PZu/exec";
+    let registeredOrgId = "";
+
+    document.getElementById('reg-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = "登録処理中...";
+
+      const payload = {
+        action: 'registerOrganization',
+        org_name: document.getElementById('org_name').value,
+        category: document.getElementById('category').value,
+        rep_name: document.getElementById('rep_name').value,
+        rep_email: document.getElementById('rep_email').value,
+        rep_phone: document.getElementById('rep_phone').value
+      };
+
+      try {
+        const response = await fetch(GAS_API_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          registeredOrgId = result.org_id;
+          document.getElementById('res-org-id').textContent = result.org_id;
+          
+          const joinUrl = `${window.location.origin}${window.location.pathname.replace('register-org.html', 'user.html')}?join=${result.org_id}`;
+          document.getElementById('res-join-url').textContent = joinUrl;
+
+          document.getElementById('form-card').classList.add('hidden');
+          document.getElementById('result-card').classList.remove('hidden');
+        } else {
+          alert('エラー: ' + result.message);
+          btn.disabled = false;
+          btn.textContent = "団体を登録する";
+        }
+      } catch (err) {
+        alert('通信エラーが発生しました: ' + err);
+        btn.disabled = false;
+        btn.textContent = "団体を登録する";
+      }
+    });
+
+    function goToGroupPage() {
+      window.location.href = `group.html?org_id=${registeredOrgId}`;
+    }
+  </script>
+</body>
+</html>
