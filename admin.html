@@ -1,203 +1,710 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>運営管理ポータル | 学祭運営</title>
-  <style>
-    body { font-family: sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
-    .container { max-width: 1000px; margin: 0 auto; }
-    .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
-    h2, h3 { margin-top: 0; color: #333; }
-    .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-    .tab-btn { padding: 10px 20px; background: #e0e0e0; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-    .tab-btn.active { background: #007bff; color: white; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9em; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    th { background: #f8f9fa; }
-    input, select, button { padding: 8px; margin-top: 5px; }
-    .status-badge { padding: 3px 6px; border-radius: 4px; font-size: 0.8em; font-weight: bold; }
-    .status-審査中 { background: #fff3cd; color: #856404; }
-    .status-承認 { background: #d4edda; color: #155724; }
-    .status-差戻し { background: #f8d7da; color: #721c24; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>学園祭実行委員会 統合管理システム - 運営</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
 
-  <div class="container">
-    <div class="card" style="background:#343a40; color:white;">
-      <h2 style="color:white; margin:0;">⚙️ 運営本部 管理ポータル</h2>
-    </div>
+<body class="bg-slate-100 text-slate-800">
 
-    <!-- タブ切り替えボタン -->
-    <div class="nav-tabs">
-      <button class="tab-btn active" onclick="switchTab('directory')">👥 統合名簿・団体一覧</button>
-      <button class="tab-btn" onclick="switchTab('forms')">📝 申請フォーム作成</button>
-      <button class="tab-btn" onclick="switchTab('submissions')">✅ 提出物・資格審査</button>
-    </div>
+<div id="loginModal"
+     class="fixed inset-0 z-50 bg-black/70 flex items-center justify-center">
 
-    <!-- タブ1: 統合名簿一覧 -->
-    <div id="tab-directory" class="tab-content active card">
-      <h3>全団体・全個人 統合名簿</h3>
-      <input type="text" id="search-input" placeholder="団体名・氏名でリアルタイム検索..." oninput="filterDirectory()">
-      
-      <h4>■ 団体一覧</h4>
-      <table>
-        <thead>
-          <tr><th>団体ID</th><th>団体名</th><th>区分</th><th>代表者氏名</th><th>連絡先</th></tr>
-        </thead>
-        <tbody id="org-table-body"><tr><td colspan="5">読み込み中...</td></tr></tbody>
-      </table>
+  <div class="bg-white rounded-2xl p-8 w-full max-w-md shadow-xl">
 
-      <h4>■ 個人・メンバー一覧</h4>
-      <table>
-        <thead>
-          <tr><th>ユーザーID</th><th>所属団体ID</th><th>氏名</th><th>メール</th><th>役割</th></tr>
-        </thead>
-        <tbody id="user-table-body"><tr><td colspan="5">読み込み中...</td></tr></tbody>
-      </table>
-    </div>
+    <h1 class="text-2xl font-bold mb-2">
+      運営管理画面
+    </h1>
 
-    <!-- タブ2: 申請フォーム動的作成 -->
-    <div id="tab-forms" class="tab-content card">
-      <h3>新規申請フォームの全体配信</h3>
-      <form id="create-form">
-        <label>フォームタイトル (例: 調理責任者受講証の提出)</label><br>
-        <input type="text" id="form-title" style="width:100%" required><br><br>
+    <p class="text-sm text-slate-500 mb-6">
+      管理者パスワードを入力してください。
+    </p>
 
-        <label>対象区分</label><br>
-        <select id="form-target">
-          <option value="個人">個人単位（各メンバー）</option>
-          <option value="団体">団体単位（代表者のみ）</option>
-        </select><br><br>
+    <input id="adminPassword"
+           type="password"
+           placeholder="管理者パスワード"
+           class="w-full border rounded-xl p-3 mb-4">
 
-        <label>提出締切日</label><br>
-        <input type="date" id="form-deadline" required><br><br>
+    <button onclick="loginAdmin()"
+            class="w-full bg-indigo-600 text-white rounded-xl py-3 font-bold">
+      ログイン
+    </button>
 
-        <button type="submit" style="background:#28a745; color:white; border:none; cursor:pointer;">申請フォームを配信公開する</button>
-      </form>
-    </div>
+    <p id="loginError"
+       class="text-red-500 text-sm mt-3"></p>
+  </div>
+</div>
 
-    <!-- タブ3: 提出物・資格審査 -->
-    <div id="tab-submissions" class="tab-content card">
-      <h3>提出物・各種資格 審査ステータス</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>提出ID</th><th>対象者ID/名前</th><th>添付/データ</th><th>提出日時</th><th>ステータス</th><th>操作</th>
-          </tr>
-        </thead>
-        <tbody id="sub-table-body"><tr><td colspan="6">読み込み中...</td></tr></tbody>
-      </table>
-    </div>
 
+<header class="bg-indigo-700 text-white shadow">
+  <div class="max-w-7xl mx-auto px-4 py-5">
+    <h1 class="text-2xl font-bold">
+      学園祭実行委員会 統合管理システム
+    </h1>
+    <p class="text-indigo-200 text-sm">
+      運営管理画面
+    </p>
+  </div>
+</header>
+
+
+<main id="main"
+      class="hidden max-w-7xl mx-auto p-4 md:p-8">
+
+  <div class="flex gap-2 mb-6">
+    <button onclick="showTab('forms')"
+            class="tab px-5 py-3 bg-indigo-600 text-white rounded-xl">
+      フォーム管理
+    </button>
+
+    <button onclick="showTab('directory')"
+            class="tab px-5 py-3 bg-white rounded-xl">
+      統合名簿
+    </button>
+
+    <button onclick="showTab('submissions')"
+            class="tab px-5 py-3 bg-white rounded-xl">
+      提出・審査
+    </button>
   </div>
 
-  <script>
-    // ★ご自身のGASデプロイURLに書き換えてください★
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx7gn6UibMj5JzjjfNcr3FcQpyAv2V0fX4FXNbv3pb9r1L5C5e7n1fTcAn5GNHg8PZu/exec";
 
-    let directoryData = { organizations: [], users: [] };
+  <!-- フォーム管理 -->
+  <section id="tab-forms">
 
-    // タブ切り替え
-    function switchTab(tabName) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      
-      event.target.classList.add('active');
-      document.getElementById(`tab-${tabName}`).classList.add('active');
+    <div class="bg-white rounded-2xl shadow p-6">
 
-      if (tabName === 'directory') loadDirectory();
-      if (tabName === 'submissions') loadSubmissions();
-    }
+      <h2 class="text-xl font-bold mb-6">
+        新規フォーム作成
+      </h2>
 
-    // 名簿データ読み込み
-    async function loadDirectory() {
-      try {
-        const res = await fetch(`${GAS_API_URL}?action=getAllDirectory`);
-        const data = await res.json();
-        if (data.status === 'success') {
-          directoryData = data;
-          renderDirectory(data.organizations, data.users);
-        }
-      } catch (e) { alert('名簿取得エラー: ' + e); }
-    }
+      <div class="grid md:grid-cols-2 gap-4">
 
-    function renderDirectory(orgs, users) {
-      const orgBody = document.getElementById('org-table-body');
-      orgBody.innerHTML = orgs.map(o => `
-        <tr><td>${o.org_id}</td><td><b>${o.org_name}</b></td><td>${o.category}</td><td>${o.rep_name}</td><td>${o.rep_email} / ${o.rep_phone}</td></tr>
-      `).join('');
+        <div>
+          <label class="font-bold text-sm">フォームタイトル</label>
+          <input id="formTitle"
+                 class="w-full border rounded-xl p-3 mt-1"
+                 placeholder="例：臨時火気使用願">
+        </div>
 
-      const userBody = document.getElementById('user-table-body');
-      userBody.innerHTML = users.map(u => `
-        <tr><td>${u.user_id}</td><td>${u.org_id}</td><td><b>${u.user_name}</b></td><td>${u.email}</td><td>${u.role}</td></tr>
-      `).join('');
-    }
+        <div>
+          <label class="font-bold text-sm">対象</label>
+          <select id="formTarget"
+                  class="w-full border rounded-xl p-3 mt-1">
+            <option value="organization">団体</option>
+            <option value="individual">個人</option>
+          </select>
+        </div>
 
-    // リアルタイム検索フィルター
-    function filterDirectory() {
-      const q = document.getElementById('search-input').value.toLowerCase();
-      const filteredOrgs = directoryData.organizations.filter(o => o.org_name.toLowerCase().includes(q) || o.rep_name.toLowerCase().includes(q));
-      const filteredUsers = directoryData.users.filter(u => u.user_name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
-      renderDirectory(filteredOrgs, filteredUsers);
-    }
+        <div>
+          <label class="font-bold text-sm">締切日</label>
+          <input id="formDeadline"
+                 type="date"
+                 class="w-full border rounded-xl p-3 mt-1">
+        </div>
 
-    // フォーム新規作成送信
-    document.getElementById('create-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const payload = {
-        action: 'createFormTemplate',
-        title: document.getElementById('form-title').value,
-        target_type: document.getElementById('form-target').value,
-        deadline: document.getElementById('form-deadline').value
-      };
+        <div>
+          <label class="font-bold text-sm">
+            PDFテンプレート GoogleドキュメントID
+          </label>
+          <input id="templateDocId"
+                 class="w-full border rounded-xl p-3 mt-1"
+                 placeholder="GoogleドキュメントのID">
+        </div>
 
-      const res = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify(payload) });
-      const result = await res.json();
-      if (result.status === 'success') {
-        alert('申請フォームを正常に配信しました！');
-        document.getElementById('create-form').reset();
-      }
+      </div>
+
+
+      <div class="mt-8">
+
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold text-lg">
+            設問
+          </h3>
+
+          <button onclick="addField()"
+                  class="bg-slate-800 text-white px-4 py-2 rounded-xl">
+            ＋ 設問追加
+          </button>
+        </div>
+
+        <div id="fieldList"
+             class="space-y-3"></div>
+
+      </div>
+
+
+      <button onclick="createForm()"
+              class="mt-6 bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold">
+        フォームを作成
+      </button>
+
+      <p id="formMessage"
+         class="mt-3 text-sm"></p>
+
+    </div>
+  </section>
+
+
+  <!-- 名簿 -->
+  <section id="tab-directory"
+           class="hidden">
+
+    <div class="bg-white rounded-2xl shadow p-6">
+
+      <h2 class="text-xl font-bold mb-5">
+        統合名簿
+      </h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+          <tr class="border-b text-left">
+            <th class="p-3">団体ID</th>
+            <th class="p-3">団体名</th>
+            <th class="p-3">区分</th>
+            <th class="p-3">代表者</th>
+            <th class="p-3">メール</th>
+          </tr>
+          </thead>
+          <tbody id="orgTable"></tbody>
+        </table>
+      </div>
+
+      <h3 class="font-bold text-lg mt-10 mb-3">
+        メンバー一覧
+      </h3>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+          <tr class="border-b text-left">
+            <th class="p-3">ユーザーID</th>
+            <th class="p-3">団体ID</th>
+            <th class="p-3">氏名</th>
+            <th class="p-3">メール</th>
+            <th class="p-3">役割</th>
+          </tr>
+          </thead>
+          <tbody id="userTable"></tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- 提出・審査 -->
+  <section id="tab-submissions"
+           class="hidden">
+
+    <div class="bg-white rounded-2xl shadow p-6">
+
+      <div class="flex justify-between items-center mb-5">
+
+        <h2 class="text-xl font-bold">
+          提出状況・審査
+        </h2>
+
+        <button onclick="loadSubmissions()"
+                class="bg-slate-800 text-white px-4 py-2 rounded-xl">
+          更新
+        </button>
+
+      </div>
+
+      <div id="submissionList"
+           class="space-y-4"></div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<script>
+
+const API_URL =
+  'https://script.google.com/macros/s/AKfycbx7gn6UibMj5JzjjfNcr3FcQpyAv2V0fX4FXNbv3pb9r1L5C5e7n1fTcAn5GNHg8PZu/exec';
+
+let token = '';
+let forms = [];
+let submissions = [];
+
+
+async function api(action, data = {}) {
+
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8'
+    },
+    body: JSON.stringify({
+      action,
+      ...data
+    })
+  });
+
+  const result = await response.json();
+
+  if (!result.success) {
+    throw new Error(result.error || 'APIエラー');
+  }
+
+  return result;
+}
+
+
+async function loginAdmin() {
+
+  const password =
+    document.getElementById('adminPassword').value;
+
+  try {
+
+    const result = await api(
+      'loginAdmin',
+      { password }
+    );
+
+    token = result.token;
+
+    document
+      .getElementById('loginModal')
+      .classList.add('hidden');
+
+    document
+      .getElementById('main')
+      .classList.remove('hidden');
+
+    loadDirectory();
+    loadSubmissions();
+
+  } catch (e) {
+
+    document
+      .getElementById('loginError')
+      .textContent = e.message;
+
+  }
+}
+
+
+function showTab(name) {
+
+  ['forms', 'directory', 'submissions']
+    .forEach(function(tab) {
+
+      document
+        .getElementById('tab-' + tab)
+        .classList.toggle(
+          'hidden',
+          tab !== name
+        );
     });
 
-    // 提出一覧＆審査処理
-    async function loadSubmissions() {
-      try {
-        const res = await fetch(`${GAS_API_URL}?action=getFormsAndSubmissions`);
-        const data = await res.json();
-        if (data.status === 'success') {
-          const body = document.getElementById('sub-table-body');
-          body.innerHTML = data.submissions.map(s => `
-            <tr>
-              <td>${s.sub_id}</td>
-              <td>${s.submitter_name} (${s.target_id})</td>
-              <td>${s.file_url ? `<a href="${s.file_url}" target="_blank">添付閲覧</a>` : 'データのみ'}</td>
-              <td>${new Date(s.submitted_at).toLocaleString('ja-JP')}</td>
-              <td><span class="status-badge status-${s.status}">${s.status}</span></td>
-              <td>
-                <button onclick="updateStatus('${s.sub_id}', '承認')">承認</button>
-                <button onclick="updateStatus('${s.sub_id}', '差戻し')">差戻し</button>
-              </td>
-            </tr>
-          `).join('');
-        }
-      } catch (e) { alert('提出一覧取得エラー: ' + e); }
-    }
-
-    async function updateStatus(subId, status) {
-      const payload = { action: 'updateSubmissionStatus', sub_id: subId, status: status };
-      const res = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify(payload) });
-      const result = await res.json();
-      if (result.status === 'success') {
-        loadSubmissions();
-      }
-    }
-
-    // 初回読み込み
+  if (name === 'directory') {
     loadDirectory();
-  </script>
+  }
+
+  if (name === 'submissions') {
+    loadSubmissions();
+  }
+}
+
+
+/* 設問 */
+function addField(field = {}) {
+
+  const div = document.createElement('div');
+
+  div.className =
+    'border rounded-xl p-4 bg-slate-50';
+
+  div.innerHTML = `
+
+    <div class="grid md:grid-cols-4 gap-3">
+
+      <input class="field-key border rounded-lg p-2"
+             placeholder="キー"
+             value="${esc(field.key || '')}">
+
+      <input class="field-label border rounded-lg p-2"
+             placeholder="設問名"
+             value="${esc(field.label || '')}">
+
+      <select class="field-type border rounded-lg p-2">
+
+        <option value="text">短文</option>
+        <option value="textarea">長文</option>
+        <option value="date">日付</option>
+        <option value="datetime-local">日時</option>
+        <option value="number">数値</option>
+        <option value="select">選択</option>
+        <option value="checkbox">チェック</option>
+
+      </select>
+
+      <label class="flex items-center gap-2">
+        <input type="checkbox"
+               class="field-required"
+               ${field.required ? 'checked' : ''}>
+        必須
+      </label>
+
+    </div>
+
+    <input class="field-options border rounded-lg p-2 mt-3 w-full"
+           placeholder="選択肢（選択式の場合：カンマ区切り）"
+           value="${esc((field.options || []).join(','))}">
+
+    <button onclick="this.parentElement.remove()"
+            class="mt-3 text-red-600 text-sm">
+      この設問を削除
+    </button>
+  `;
+
+  div.querySelector('.field-type').value =
+    field.type || 'text';
+
+  document
+    .getElementById('fieldList')
+    .appendChild(div);
+}
+
+
+function collectFields() {
+
+  return [...document.querySelectorAll('#fieldList > div')]
+    .map(function(div) {
+
+      const options =
+        div.querySelector('.field-options').value
+          .split(',')
+          .map(x => x.trim())
+          .filter(Boolean);
+
+      return {
+        key: div.querySelector('.field-key').value.trim(),
+        label: div.querySelector('.field-label').value.trim(),
+        type: div.querySelector('.field-type').value,
+        required: div.querySelector('.field-required').checked,
+        options
+      };
+    });
+}
+
+
+async function createForm() {
+
+  const message =
+    document.getElementById('formMessage');
+
+  try {
+
+    const result = await api(
+      'createFormTemplate',
+      {
+        token,
+
+        title:
+          document.getElementById('formTitle').value,
+
+        target_type:
+          document.getElementById('formTarget').value,
+
+        deadline:
+          document.getElementById('formDeadline').value,
+
+        template_doc_id:
+          document.getElementById('templateDocId').value,
+
+        fields:
+          collectFields()
+      }
+    );
+
+    message.className =
+      'mt-3 text-sm text-green-600';
+
+    message.textContent =
+      '作成しました。フォームID：' +
+      result.form_id;
+
+  } catch (e) {
+
+    message.className =
+      'mt-3 text-sm text-red-600';
+
+    message.textContent = e.message;
+  }
+}
+
+
+/* 名簿 */
+async function loadDirectory() {
+
+  try {
+
+    const result =
+      await api('getAllDirectory', { token });
+
+    document.getElementById('orgTable').innerHTML =
+      result.organizations.map(function(o) {
+
+        return `
+          <tr class="border-b">
+            <td class="p-3">${esc(o.org_id)}</td>
+            <td class="p-3">${esc(o.org_name)}</td>
+            <td class="p-3">${esc(o.category)}</td>
+            <td class="p-3">${esc(o.rep_name)}</td>
+            <td class="p-3">${esc(o.rep_email)}</td>
+          </tr>
+        `;
+
+      }).join('');
+
+    document.getElementById('userTable').innerHTML =
+      result.users.map(function(u) {
+
+        return `
+          <tr class="border-b">
+            <td class="p-3">${esc(u.user_id)}</td>
+            <td class="p-3">${esc(u.org_id)}</td>
+            <td class="p-3">${esc(u.user_name)}</td>
+            <td class="p-3">${esc(u.email)}</td>
+            <td class="p-3">${esc(u.role)}</td>
+          </tr>
+        `;
+
+      }).join('');
+
+  } catch (e) {
+    alert(e.message);
+  }
+}
+
+
+/* 提出 */
+async function loadSubmissions() {
+
+  try {
+
+    const result =
+      await api(
+        'getFormsAndSubmissions',
+        { token }
+      );
+
+    forms = result.forms;
+    submissions = result.submissions;
+
+    renderSubmissions();
+
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+
+function renderSubmissions() {
+
+  const container =
+    document.getElementById('submissionList');
+
+  if (!submissions.length) {
+
+    container.innerHTML =
+      '<p class="text-slate-500">申請はありません。</p>';
+
+    return;
+  }
+
+  container.innerHTML =
+    submissions.map(function(s) {
+
+      const form =
+        forms.find(f => f.form_id === s.form_id);
+
+      const statusClass =
+        s.status === '承認'
+          ? 'bg-green-100 text-green-700'
+          : s.status === '差戻し'
+            ? 'bg-red-100 text-red-700'
+            : 'bg-yellow-100 text-yellow-700';
+
+      return `
+
+      <div class="border rounded-2xl p-5">
+
+        <div class="flex flex-wrap gap-2 justify-between">
+
+          <div>
+            <h3 class="font-bold text-lg">
+              ${esc(form ? form.title : s.form_id)}
+            </h3>
+
+            <p class="text-sm text-slate-500">
+              ${esc(s.target_name)}
+              ／ ${esc(s.submitter_name)}
+            </p>
+
+            <p class="text-xs text-slate-400">
+              ${esc(s.submitted_at)}
+            </p>
+          </div>
+
+          <span class="px-3 py-1 rounded-full text-sm ${statusClass}">
+            ${esc(s.status)}
+          </span>
+
+        </div>
+
+
+        <div class="mt-4 bg-slate-50 rounded-xl p-4">
+
+          ${Object.entries(s.data || {}).map(function([key,value]) {
+
+            return `
+              <div class="mb-2">
+                <span class="font-bold">${esc(key)}</span>：
+                ${esc(Array.isArray(value)
+                  ? value.join(', ')
+                  : String(value))}
+              </div>
+            `;
+
+          }).join('')}
+
+        </div>
+
+
+        <div class="flex flex-wrap gap-2 mt-4">
+
+          ${
+            s.file_url
+            ? `<a href="${esc(s.file_url)}"
+                  target="_blank"
+                  class="px-4 py-2 bg-slate-200 rounded-xl">
+                  📎 添付ファイル
+               </a>`
+            : ''
+          }
+
+          ${
+            s.generated_pdf_url
+            ? `<a href="${esc(s.generated_pdf_url)}"
+                  target="_blank"
+                  class="px-4 py-2 bg-indigo-600 text-white rounded-xl">
+                  📄 申請書PDF
+               </a>`
+            : ''
+          }
+
+        </div>
+
+
+        <div class="mt-5 border-t pt-4">
+
+          <select id="status-${s.sub_id}"
+                  class="border rounded-xl p-2">
+
+            <option value="審査中"
+              ${s.status === '審査中' ? 'selected' : ''}>
+              審査中
+            </option>
+
+            <option value="承認"
+              ${s.status === '承認' ? 'selected' : ''}>
+              承認
+            </option>
+
+            <option value="差戻し"
+              ${s.status === '差戻し' ? 'selected' : ''}>
+              差戻し
+            </option>
+
+          </select>
+
+          <input id="comment-${s.sub_id}"
+                 value="${esc(s.comment || '')}"
+                 placeholder="差戻し理由"
+                 class="border rounded-xl p-2 ml-2 w-full md:w-96">
+
+          <button onclick="updateStatus('${s.sub_id}')"
+                  class="ml-2 mt-2 md:mt-0 px-5 py-2 bg-indigo-600 text-white rounded-xl">
+            更新
+          </button>
+
+        </div>
+
+      </div>
+      `;
+
+    }).join('');
+}
+
+
+async function updateStatus(subId) {
+
+  try {
+
+    await api(
+      'updateSubmissionStatus',
+      {
+        token,
+        sub_id: subId,
+
+        status:
+          document.getElementById(
+            'status-' + subId
+          ).value,
+
+        comment:
+          document.getElementById(
+            'comment-' + subId
+          ).value
+      }
+    );
+
+    await loadSubmissions();
+
+  } catch (e) {
+
+    alert(e.message);
+
+  }
+}
+
+
+function esc(value) {
+
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+
+}
+
+
+document.addEventListener('keydown', function(e) {
+
+  if (
+    e.key === 'Enter' &&
+    document.activeElement.id === 'adminPassword'
+  ) {
+    loginAdmin();
+  }
+
+});
+
+</script>
+
 </body>
 </html>
