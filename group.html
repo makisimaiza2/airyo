@@ -3,1410 +3,527 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>団体ページ - 学園祭実行委員会 統合管理システム</title>
-
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <style>
-    .hidden-section {
-      display: none;
-    }
-  </style>
 </head>
-
-
 <body class="bg-gray-100 min-h-screen">
-
-
-<header class="bg-indigo-600 text-white shadow-lg">
-  <div class="max-w-7xl mx-auto px-4 py-4">
-
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
-      <a href="index.html"
-         class="text-xl font-bold">
-        学園祭実行委員会 統合管理システム
-      </a>
-
-      <nav class="flex flex-wrap gap-2">
-
-        <a href="index.html"
-           class="px-4 py-2 rounded-lg hover:bg-white/20">
-          🏠 メイン
-        </a>
-
-        <a href="group.html"
-           class="px-4 py-2 rounded-lg bg-white/20">
-          🏢 団体
-        </a>
-
-        <a href="user.html"
-           class="px-4 py-2 rounded-lg hover:bg-white/20">
-          👤 個人
-        </a>
-
-        <a href="admin.html"
-           class="px-4 py-2 rounded-lg hover:bg-white/20">
-          ⚙️ 管理者
-        </a>
-
-      </nav>
-
-    </div>
-  </div>
-</header>
-
-
-<main class="max-w-6xl mx-auto px-4 py-8">
-
-
-  <!-- ログイン前 -->
-
-  <div id="authArea">
-
-    <div class="bg-white rounded-2xl shadow p-6 mb-8">
-
-      <div class="flex flex-wrap gap-2 mb-6">
-
-        <button onclick="showAuth('login')"
-                id="tabLogin"
-                class="px-5 py-2 rounded-lg bg-indigo-600 text-white">
-          団体ログイン
-        </button>
-
-        <button onclick="showAuth('register')"
-                id="tabRegister"
-                class="px-5 py-2 rounded-lg bg-gray-200">
-          新規団体登録
-        </button>
-
-        <button onclick="showAuth('recover')"
-                id="tabRecover"
-                class="px-5 py-2 rounded-lg bg-gray-200">
-          ID回復
-        </button>
-
-      </div>
-
-
-      <!-- ログイン -->
-
-      <div id="loginBox">
-
-        <h2 class="text-2xl font-bold mb-5">
-          🏢 団体ログイン
-        </h2>
-
-        <form onsubmit="loginOrganization(event)"
-              class="space-y-4">
-
-          <input id="loginOrgId"
-                 required
-                 placeholder="団体ID"
-                 class="w-full border rounded-lg px-4 py-3">
-
-          <input id="loginPassword"
-                 type="password"
-                 required
-                 placeholder="パスワード"
-                 class="w-full border rounded-lg px-4 py-3">
-
-          <button class="w-full bg-indigo-600 text-white rounded-lg py-3 font-bold hover:bg-indigo-700">
-            ログイン
-          </button>
-
-        </form>
-
-      </div>
-
-
-      <!-- 新規登録 -->
-
-      <div id="registerBox"
-           class="hidden">
-
-        <h2 class="text-2xl font-bold mb-5">
-          📝 新規団体登録
-        </h2>
-
-        <form onsubmit="registerOrganization(event)"
-              class="space-y-4">
-
-          <input id="regOrgName"
-                 required
-                 placeholder="団体名"
-                 class="w-full border rounded-lg px-4 py-3">
-
-          <input id="regCategory"
-                 required
-                 placeholder="カテゴリ"
-                 class="w-full border rounded-lg px-4 py-3">
-
-          <input id="regRepName"
-                 required
-                 placeholder="代表者名"
-                 class="w-full border rounded-lg px-4 py-3">
-
-          <input id="regRepEmail"
-                 type="email"
-                 required
-                 placeholder="代表者メールアドレス"
-                 class="w-full border rounded-lg px-4 py-3">
-
-          <input id="regPassword"
-                 type="password"
-                 required
-                 placeholder="パスワード"
-                 class="w-full border rounded-lg px-4 py-3">
-
-          <button class="w-full bg-green-600 text-white rounded-lg py-3 font-bold hover:bg-green-700">
-            団体を登録する
-          </button>
-
-        </form>
-
-      </div>
-
-
-      <!-- ID回復 -->
-
-      <div id="recoverBox"
-           class="hidden">
-
-        <h2 class="text-2xl font-bold mb-5">
-          🔎 団体ID回復
-        </h2>
-
-        <form onsubmit="recoverOrgId(event)"
-              class="space-y-4">
-
-          <input id="recoverOrgName"
-                 required
-                 placeholder="団体名"
-                 class="w-full border rounded-lg px-4 py-3">
-
-          <input id="recoverRepEmail"
-                 type="email"
-                 required
-                 placeholder="代表者メールアドレス"
-                 class="w-full border rounded-lg px-4 py-3">
-
-          <button class="w-full bg-gray-700 text-white rounded-lg py-3 font-bold">
-            団体IDを確認
-          </button>
-
-        </form>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- ログイン後 -->
-
-  <div id="dashboard"
-       class="hidden">
-
-
-    <!-- 上部 -->
-
-    <div class="bg-white rounded-2xl shadow p-6 mb-6">
-
+  <header class="bg-indigo-600 text-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <a href="index.html" class="text-xl font-bold">学園祭実行委員会 統合管理システム</a>
+        <nav class="flex flex-wrap gap-2">
+          <a href="index.html" class="px-4 py-2 rounded-lg hover:bg-white/20">🏠 メイン</a>
+          <a href="group.html" class="px-4 py-2 rounded-lg bg-white/20">🏢 団体</a>
+          <a href="user.html" class="px-4 py-2 rounded-lg hover:bg-white/20">👤 個人</a>
+          <a href="admin.html" class="px-4 py-2 rounded-lg hover:bg-white/20">⚙️ 管理者</a>
+        </nav>
+      </div>
+    </div>
+  </header>
 
-        <div>
+  <main class="max-w-6xl mx-auto px-4 py-8">
+    <!-- メッセージ通知エリア -->
+    <div id="msgBox" class="hidden mb-6 p-4 rounded-xl border font-semibold"></div>
 
-          <p class="text-gray-500">
-            ログイン中
-          </p>
-
-          <h1 id="orgNameDisplay"
-              class="text-3xl font-bold">
-          </h1>
-
-          <p id="orgIdDisplay"
-             class="text-gray-500 mt-1">
-          </p>
-
+    <!-- ログイン前 -->
+    <div id="authArea">
+      <div class="bg-white rounded-2xl shadow p-6 mb-8">
+        <div class="flex flex-wrap gap-2 mb-6">
+          <button onclick="showAuth('login')" id="tabLogin" class="px-5 py-2 rounded-lg bg-indigo-600 text-white">団体ログイン</button>
+          <button onclick="showAuth('register')" id="tabRegister" class="px-5 py-2 rounded-lg bg-gray-200">新規団体登録</button>
+          <button onclick="showAuth('recover')" id="tabRecover" class="px-5 py-2 rounded-lg bg-gray-200">ID回復</button>
         </div>
 
-        <button onclick="logout()"
-                class="bg-red-500 text-white px-5 py-3 rounded-lg">
-          ログアウト
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <!-- 団体情報 -->
-
-    <section class="bg-white rounded-2xl shadow p-6 mb-6">
-
-      <h2 class="text-2xl font-bold mb-5">
-        🏢 団体情報
-      </h2>
-
-      <div id="orgInfo"
-           class="grid md:grid-cols-2 gap-4">
-      </div>
-
-    </section>
-
-
-    <!-- メンバー -->
-
-    <section class="bg-white rounded-2xl shadow p-6 mb-6">
-
-      <h2 class="text-2xl font-bold mb-5">
-        👥 メンバー管理
-      </h2>
-
-      <form onsubmit="addMember(event)"
-            class="grid md:grid-cols-2 gap-4 mb-8">
-
-        <input id="memberName"
-               required
-               placeholder="氏名"
-               class="border rounded-lg px-4 py-3">
-
-        <input id="memberEmail"
-               type="email"
-               required
-               placeholder="メールアドレス"
-               class="border rounded-lg px-4 py-3">
-
-        <input id="memberRole"
-               required
-               placeholder="役割"
-               class="border rounded-lg px-4 py-3">
-
-        <input id="memberPassword"
-               type="password"
-               required
-               placeholder="パスワード"
-               class="border rounded-lg px-4 py-3">
-
-        <button class="md:col-span-2 bg-indigo-600 text-white py-3 rounded-lg font-bold">
-          メンバーを登録する
-        </button>
-
-      </form>
-
-
-      <div id="memberResult"
-           class="hidden bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-      </div>
-
-
-      <div class="overflow-x-auto">
-
-        <table class="w-full">
-
-          <thead>
-            <tr class="border-b text-left">
-              <th class="p-3">ユーザーID</th>
-              <th class="p-3">氏名</th>
-              <th class="p-3">メール</th>
-              <th class="p-3">役割</th>
-            </tr>
-          </thead>
-
-          <tbody id="membersTable">
-          </tbody>
-
-        </table>
-
-      </div>
-
-    </section>
-
-
-    <!-- 申請 -->
-
-    <section class="bg-white rounded-2xl shadow p-6 mb-6">
-
-      <h2 class="text-2xl font-bold mb-5">
-        📋 団体向け申請
-      </h2>
-
-      <div id="formsArea">
-      </div>
-
-    </section>
-
-
-    <!-- 履歴 -->
-
-    <section class="bg-white rounded-2xl shadow p-6">
-
-      <h2 class="text-2xl font-bold mb-5">
-        📂 提出履歴
-      </h2>
-
-      <div id="historyArea">
-      </div>
-
-    </section>
-
-  </div>
-
-</main>
-
-
-<footer class="bg-gray-900 text-gray-400 text-center py-6 mt-12">
-  学園祭実行委員会 統合管理システム
-</footer>
-
-
-<script>
-
-/* =========================================
-   API URL
-========================================= */
-
-const API_URL =
-  'https://script.google.com/macros/s/AKfycbx7gn6UibMj5JzjjfNcr3FcQpyAv2V0fX4FXNbv3pb9r1L5C5e7n1fTcAn5GNHg8PZu/exec';
-
-
-let organization = null;
-let members = [];
-let forms = [];
-let submissions = [];
-
-
-/* =========================================
-   共通API
-========================================= */
-
-async function api(data) {
-
-  const response = await fetch(API_URL, {
-    method: 'POST',
-    body: JSON.stringify(data)
-  });
-
-  return await response.json();
-}
-
-
-/* =========================================
-   認証タブ
-========================================= */
-
-function showAuth(type) {
-
-  document.getElementById('loginBox').classList.add('hidden');
-  document.getElementById('registerBox').classList.add('hidden');
-  document.getElementById('recoverBox').classList.add('hidden');
-
-  document.getElementById('tabLogin').className =
-    'px-5 py-2 rounded-lg bg-gray-200';
-
-  document.getElementById('tabRegister').className =
-    'px-5 py-2 rounded-lg bg-gray-200';
-
-  document.getElementById('tabRecover').className =
-    'px-5 py-2 rounded-lg bg-gray-200';
-
-
-  if (type === 'login') {
-
-    document.getElementById('loginBox').classList.remove('hidden');
-
-    document.getElementById('tabLogin').className =
-      'px-5 py-2 rounded-lg bg-indigo-600 text-white';
-
-  }
-
-  if (type === 'register') {
-
-    document.getElementById('registerBox').classList.remove('hidden');
-
-    document.getElementById('tabRegister').className =
-      'px-5 py-2 rounded-lg bg-indigo-600 text-white';
-
-  }
-
-  if (type === 'recover') {
-
-    document.getElementById('recoverBox').classList.remove('hidden');
-
-    document.getElementById('tabRecover').className =
-      'px-5 py-2 rounded-lg bg-indigo-600 text-white';
-
-  }
-}
-
-
-/* =========================================
-   団体登録
-========================================= */
-
-async function registerOrganization(event) {
-
-  event.preventDefault();
-
-  const result = await api({
-
-    action: 'registerOrganization',
-
-    org_name:
-      document.getElementById('regOrgName').value,
-
-    category:
-      document.getElementById('regCategory').value,
-
-    rep_name:
-      document.getElementById('regRepName').value,
-
-    rep_email:
-      document.getElementById('regRepEmail').value,
-
-    password:
-      document.getElementById('regPassword').value
-
-  });
-
-
-  if (!result.success) {
-
-    alert(result.message);
-    return;
-
-  }
-
-
-  alert(
-    '団体登録が完了しました。\n\n' +
-    '団体ID：' + result.org_id + '\n' +
-    '代表者ユーザーID：' + result.user_id
-  );
-
-
-  document.getElementById('loginOrgId').value =
-    result.org_id;
-
-  document.getElementById('loginPassword').value =
-    document.getElementById('regPassword').value;
-
-  showAuth('login');
-}
-
-
-/* =========================================
-   団体ログイン
-========================================= */
-
-async function loginOrganization(event) {
-
-  event.preventDefault();
-
-  const result = await api({
-
-    action: 'loginOrganization',
-
-    org_id:
-      document.getElementById('loginOrgId').value,
-
-    password:
-      document.getElementById('loginPassword').value
-
-  });
-
-
-  if (!result.success) {
-
-    alert(result.message);
-    return;
-
-  }
-
-
-  organization = result.organization;
-
-  sessionStorage.setItem(
-    'festivalOrganization',
-    JSON.stringify(organization)
-  );
-
-  showDashboard();
-
-  await loadOrganizationData();
-}
-
-
-/* =========================================
-   団体ID回復
-========================================= */
-
-async function recoverOrgId(event) {
-
-  event.preventDefault();
-
-  const result = await api({
-
-    action: 'recoverOrgId',
-
-    org_name:
-      document.getElementById('recoverOrgName').value,
-
-    rep_email:
-      document.getElementById('recoverRepEmail').value
-
-  });
-
-
-  if (!result.success) {
-
-    alert(result.message);
-    return;
-
-  }
-
-
-  alert(
-    '団体ID：' +
-    result.org_id
-  );
-}
-
-
-/* =========================================
-   ダッシュボード
-========================================= */
-
-function showDashboard() {
-
-  document.getElementById('authArea')
-    .classList.add('hidden');
-
-  document.getElementById('dashboard')
-    .classList.remove('hidden');
-
-  document.getElementById('orgNameDisplay')
-    .textContent =
-      organization.org_name;
-
-  document.getElementById('orgIdDisplay')
-    .textContent =
-      '団体ID：' + organization.org_id;
-}
-
-
-/* =========================================
-   団体データ読み込み
-========================================= */
-
-async function loadOrganizationData() {
-
-  const result = await api({
-
-    action: 'getOrgDetails',
-
-    org_id:
-      organization.org_id
-
-  });
-
-
-  if (!result.success) {
-
-    alert(result.message);
-    return;
-
-  }
-
-
-  members = result.members;
-
-  renderOrganization(result.organization);
-
-  renderMembers();
-
-  await loadForms();
-
-  await loadSubmissions();
-}
-
-
-/* =========================================
-   団体情報表示
-========================================= */
-
-function renderOrganization(org) {
-
-  document.getElementById('orgInfo').innerHTML = `
-
-    <div class="bg-gray-50 rounded-lg p-4">
-      <p class="text-sm text-gray-500">団体ID</p>
-      <p class="font-bold">${escapeHtml(org.org_id)}</p>
-    </div>
-
-    <div class="bg-gray-50 rounded-lg p-4">
-      <p class="text-sm text-gray-500">団体名</p>
-      <p class="font-bold">${escapeHtml(org.org_name)}</p>
-    </div>
-
-    <div class="bg-gray-50 rounded-lg p-4">
-      <p class="text-sm text-gray-500">カテゴリ</p>
-      <p class="font-bold">${escapeHtml(org.category)}</p>
-    </div>
-
-    <div class="bg-gray-50 rounded-lg p-4">
-      <p class="text-sm text-gray-500">代表者</p>
-      <p class="font-bold">${escapeHtml(org.rep_name)}</p>
-    </div>
-
-  `;
-}
-
-
-/* =========================================
-   メンバー表示
-========================================= */
-
-function renderMembers() {
-
-  const tbody =
-    document.getElementById('membersTable');
-
-  tbody.innerHTML = '';
-
-  members.forEach(member => {
-
-    const tr =
-      document.createElement('tr');
-
-    tr.className =
-      'border-b';
-
-    tr.innerHTML = `
-
-      <td class="p-3 font-mono">
-        ${escapeHtml(member.user_id)}
-      </td>
-
-      <td class="p-3">
-        ${escapeHtml(member.user_name)}
-      </td>
-
-      <td class="p-3">
-        ${escapeHtml(member.email)}
-      </td>
-
-      <td class="p-3">
-        ${escapeHtml(member.role)}
-      </td>
-
-    `;
-
-    tbody.appendChild(tr);
-
-  });
-}
-
-
-/* =========================================
-   メンバー追加
-========================================= */
-
-async function addMember(event) {
-
-  event.preventDefault();
-
-  const result = await api({
-
-    action: 'addUser',
-
-    org_id:
-      organization.org_id,
-
-    user_name:
-      document.getElementById('memberName').value,
-
-    email:
-      document.getElementById('memberEmail').value,
-
-    role:
-      document.getElementById('memberRole').value,
-
-    password:
-      document.getElementById('memberPassword').value
-
-  });
-
-
-  if (!result.success) {
-
-    alert(result.message);
-    return;
-
-  }
-
-
-  const box =
-    document.getElementById('memberResult');
-
-  box.innerHTML = `
-    <strong>ユーザーを発行しました。</strong><br><br>
-    ユーザーID：
-    <span class="font-mono font-bold">
-      ${escapeHtml(result.user_id)}
-    </span>
-  `;
-
-  box.classList.remove('hidden');
-
-
-  document.getElementById('memberName').value = '';
-  document.getElementById('memberEmail').value = '';
-  document.getElementById('memberRole').value = '';
-  document.getElementById('memberPassword').value = '';
-
-
-  await loadOrganizationData();
-}
-
-
-/* =========================================
-   フォーム読み込み
-========================================= */
-
-async function loadForms() {
-
-  const result = await api({
-
-    action: 'getFormsForTarget',
-
-    target_type: 'organization'
-
-  });
-
-
-  if (!result.success) {
-
-    alert(result.message);
-    return;
-
-  }
-
-
-  forms = result.forms;
-
-  renderForms();
-}
-
-
-/* =========================================
-   フォーム表示
-========================================= */
-
-function renderForms() {
-
-  const area =
-    document.getElementById('formsArea');
-
-  area.innerHTML = '';
-
-  if (forms.length === 0) {
-
-    area.innerHTML = `
-      <p class="text-gray-500">
-        現在、申請フォームはありません。
-      </p>
-    `;
-
-    return;
-  }
-
-
-  forms.forEach(form => {
-
-    const card =
-      document.createElement('div');
-
-    card.className =
-      'border rounded-xl p-6 mb-6';
-
-    let fieldsHtml = '';
-
-    form.fields.forEach((field, index) => {
-
-      const fieldName =
-        field.name ||
-        ('field_' + index);
-
-      const label =
-        field.label ||
-        fieldName;
-
-      const type =
-        field.type ||
-        'text';
-
-
-      if (type === 'textarea') {
-
-        fieldsHtml += `
-
-          <div class="mb-4">
-
-            <label class="block font-bold mb-2">
-              ${escapeHtml(label)}
-            </label>
-
-            <textarea
-              data-form="${form.form_id}"
-              data-field="${escapeHtml(fieldName)}"
-              rows="4"
-              class="form-field w-full border rounded-lg px-4 py-3"
-            ></textarea>
-
-          </div>
-
-        `;
-
-      } else {
-
-        fieldsHtml += `
-
-          <div class="mb-4">
-
-            <label class="block font-bold mb-2">
-              ${escapeHtml(label)}
-            </label>
-
-            <input
-              type="${escapeHtml(type)}"
-              data-form="${form.form_id}"
-              data-field="${escapeHtml(fieldName)}"
-              class="form-field w-full border rounded-lg px-4 py-3"
-            >
-
-          </div>
-
-        `;
-      }
-
-    });
-
-
-    card.innerHTML = `
-
-      <h3 class="text-xl font-bold mb-2">
-        ${escapeHtml(form.title)}
-      </h3>
-
-      <p class="text-red-600 mb-5">
-        締切：${escapeHtml(form.deadline)}
-      </p>
-
-      ${fieldsHtml}
-
-      <div class="mb-4">
-
-        <label class="block font-bold mb-2">
-          添付ファイル
-        </label>
-
-        <input
-          type="file"
-          id="file_${form.form_id}"
-          class="w-full border rounded-lg px-4 py-3"
-        >
-
-        <p class="text-sm text-gray-500 mt-1">
-          10MB以下
-        </p>
-
-      </div>
-
-      <button
-        onclick="submitApplication('${form.form_id}')"
-        class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700">
-
-        申請を提出する
-
-      </button>
-
-    `;
-
-    area.appendChild(card);
-
-  });
-}
-
-
-/* =========================================
-   申請
-========================================= */
-
-async function submitApplication(formId) {
-
-  const form =
-    forms.find(f => f.form_id === formId);
-
-  if (!form) return;
-
-
-  const data = {};
-
-
-  document
-    .querySelectorAll(
-      `.form-field[data-form="${formId}"]`
-    )
-    .forEach(input => {
-
-      data[input.dataset.field] =
-        input.value;
-
-    });
-
-
-  const fileInput =
-    document.getElementById(
-      'file_' + formId
-    );
-
-
-  let file = null;
-
-
-  if (
-    fileInput &&
-    fileInput.files &&
-    fileInput.files.length > 0
-  ) {
-
-    const selectedFile =
-      fileInput.files[0];
-
-    if (
-      selectedFile.size >
-      10 * 1024 * 1024
-    ) {
-
-      alert('ファイルは10MB以下にしてください。');
-      return;
-
-    }
-
-    file =
-      await fileToBase64(selectedFile);
-  }
-
-
-  const result = await api({
-
-    action: 'submitForm',
-
-    form_id: formId,
-
-    target_id:
-      organization.org_id,
-
-    submitter_name:
-      organization.rep_name,
-
-    data: data,
-
-    file: file
-
-  });
-
-
-  if (!result.success) {
-
-    alert(result.message);
-    return;
-
-  }
-
-
-  alert(result.message);
-
-  await loadSubmissions();
-}
-
-
-/* =========================================
-   再提出
-========================================= */
-
-async function resubmitApplication(submission) {
-
-  const form =
-    forms.find(f =>
-      f.form_id === submission.form_id
-    );
-
-  if (!form) {
-
-    alert('元のフォームが見つかりません。');
-    return;
-
-  }
-
-
-  const data = {};
-
-
-  form.fields.forEach(field => {
-
-    const value =
-      prompt(
-        field.label || field.name,
-        submission.data[field.name] || ''
-      );
-
-    if (value !== null) {
-      data[field.name] = value;
-    }
-
-  });
-
-
-  const result = await api({
-
-    action: 'submitForm',
-
-    sub_id:
-      submission.sub_id,
-
-    form_id:
-      submission.form_id,
-
-    target_id:
-      organization.org_id,
-
-    submitter_name:
-      organization.rep_name,
-
-    data: data
-
-  });
-
-
-  if (!result.success) {
-
-    alert(result.message);
-    return;
-
-  }
-
-
-  alert('再提出しました。');
-
-  await loadSubmissions();
-}
-
-
-/* =========================================
-   履歴
-========================================= */
-
-async function loadSubmissions() {
-
-  const result = await api({
-
-    action: 'getSubmissionsForTarget',
-
-    target_id:
-      organization.org_id
-
-  });
-
-
-  if (!result.success) return;
-
-  submissions = result.submissions;
-
-  renderHistory();
-}
-
-
-function renderHistory() {
-
-  const area =
-    document.getElementById('historyArea');
-
-  area.innerHTML = '';
-
-  if (submissions.length === 0) {
-
-    area.innerHTML = `
-      <p class="text-gray-500">
-        提出履歴はありません。
-      </p>
-    `;
-
-    return;
-  }
-
-
-  submissions
-    .slice()
-    .reverse()
-    .forEach(submission => {
-
-      const form =
-        forms.find(
-          f => f.form_id === submission.form_id
-        );
-
-      const title =
-        form
-          ? form.title
-          : submission.form_id;
-
-
-      const card =
-        document.createElement('div');
-
-      card.className =
-        'border rounded-xl p-5 mb-4';
-
-
-      let statusClass =
-        'bg-gray-100 text-gray-800';
-
-      if (submission.status === '承認') {
-        statusClass =
-          'bg-green-100 text-green-800';
-      }
-
-      if (submission.status === '差戻し') {
-        statusClass =
-          'bg-red-100 text-red-800';
-      }
-
-      if (submission.status === '審査中') {
-        statusClass =
-          'bg-yellow-100 text-yellow-800';
-      }
-
-
-      card.innerHTML = `
-
-        <div class="flex flex-col md:flex-row md:justify-between gap-3">
-
-          <div>
-
-            <h3 class="font-bold text-lg">
-              ${escapeHtml(title)}
-            </h3>
-
-            <p class="text-sm text-gray-500">
-              ${escapeHtml(String(submission.submitted_at))}
-            </p>
-
-          </div>
-
-          <span class="px-3 py-1 rounded-full ${statusClass}">
-            ${escapeHtml(submission.status)}
-          </span>
-
+        <!-- ログイン -->
+        <div id="loginBox">
+          <h2 class="text-2xl font-bold mb-5">🏢 団体ログイン</h2>
+          <form onsubmit="loginOrganization(event)" class="space-y-4">
+            <input id="loginOrgId" required placeholder="団体ID (例: ORG-XXXXXXXX)" class="w-full border rounded-lg px-4 py-3">
+            <input id="loginPassword" type="password" required placeholder="パスワード" class="w-full border rounded-lg px-4 py-3">
+            <button class="w-full bg-indigo-600 text-white rounded-lg py-3 font-bold hover:bg-indigo-700">ログイン</button>
+          </form>
         </div>
 
-
-        ${
-          submission.comment
-          ? `
-            <div class="mt-4 bg-red-50 border border-red-200 p-4 rounded-lg">
-              <p class="font-bold text-red-700">
-                差戻し理由
-              </p>
-
-              <p class="mt-1">
-                ${escapeHtml(submission.comment)}
-              </p>
+        <!-- 新規登録 -->
+        <div id="registerBox" class="hidden">
+          <h2 class="text-2xl font-bold mb-5">📝 新規団体登録</h2>
+          <form onsubmit="registerOrganization(event)" class="space-y-4">
+            <input id="regOrgName" required placeholder="団体名" class="w-full border rounded-lg px-4 py-3">
+            <div>
+              <label class="block text-sm font-bold text-gray-700 mb-1">カテゴリ</label>
+              <select id="regCategory" required class="w-full border rounded-lg px-4 py-3 bg-white">
+                <option value="">選択してください</option>
+                <option value="屋外出店（食品）">屋外出店（食品）</option>
+                <option value="屋内出店">屋内出店</option>
+                <option value="ステージ発表">ステージ発表</option>
+              </select>
             </div>
-          `
-          : ''
-        }
-
-
-        <div class="flex flex-wrap gap-2 mt-4">
-
-          ${
-            submission.generated_pdf_url
-            ? `
-              <a
-                href="${escapeAttribute(submission.generated_pdf_url)}"
-                target="_blank"
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg">
-
-                📄 申請書PDFをダウンロード（教員署名用）
-
-              </a>
-            `
-            : ''
-          }
-
-
-          ${
-            submission.file_url
-            ? `
-              <a
-                href="${escapeAttribute(submission.file_url)}"
-                target="_blank"
-                class="bg-gray-700 text-white px-4 py-2 rounded-lg">
-
-                📎 添付ファイル
-
-              </a>
-            `
-            : ''
-          }
-
-
-          ${
-            submission.status === '差戻し'
-            ? `
-              <button
-                onclick='resubmitApplication(${JSON.stringify(submission).replace(/'/g, "&apos;")})'
-                class="bg-orange-500 text-white px-4 py-2 rounded-lg">
-
-                ✏️ 編集して再提出
-
-              </button>
-            `
-            : ''
-          }
-
+            <input id="regRepName" required placeholder="代表者氏名" class="w-full border rounded-lg px-4 py-3">
+            <input id="regRepEmail" type="email" required placeholder="代表者メールアドレス" class="w-full border rounded-lg px-4 py-3">
+            <input id="regUserId" maxlength="4" pattern="\d{4}" required placeholder="代表者 ユーザーID (学生番号4桁 例: 6303)" class="w-full border rounded-lg px-4 py-3">
+            <input id="regPassword" type="password" required placeholder="団体パスワード" class="w-full border rounded-lg px-4 py-3">
+            <button class="w-full bg-green-600 text-white rounded-lg py-3 font-bold hover:bg-green-700">団体を登録する</button>
+          </form>
         </div>
 
-      `;
+        <!-- ID回復 -->
+        <div id="recoverBox" class="hidden">
+          <h2 class="text-2xl font-bold mb-5">🔍 団体ID回復</h2>
+          <form onsubmit="recoverOrgId(event)" class="space-y-4">
+            <input id="recoverOrgName" required placeholder="団体名" class="w-full border rounded-lg px-4 py-3">
+            <input id="recoverRepEmail" type="email" required placeholder="代表者メールアドレス" class="w-full border rounded-lg px-4 py-3">
+            <button class="w-full bg-gray-700 text-white rounded-lg py-3 font-bold hover:bg-gray-800">団体IDを確認</button>
+          </form>
+        </div>
+      </div>
+    </div>
 
-      area.appendChild(card);
+    <!-- ログイン後ダッシュボード -->
+    <div id="dashboard" class="hidden">
+      <div class="bg-white rounded-2xl shadow p-6 mb-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <p class="text-gray-500">ログイン中</p>
+            <h1 id="orgNameDisplay" class="text-3xl font-bold"></h1>
+            <p id="orgIdDisplay" class="text-gray-500 mt-1"></p>
+          </div>
+          <button onclick="logout()" class="bg-red-500 text-white px-5 py-3 rounded-lg hover:bg-red-600 font-bold">ログアウト</button>
+        </div>
+      </div>
 
-    });
-}
+      <!-- 団体情報 -->
+      <section class="bg-white rounded-2xl shadow p-6 mb-6">
+        <h2 class="text-2xl font-bold mb-5">団体基本情報</h2>
+        <div id="orgInfo" class="grid md:grid-cols-2 gap-4"></div>
+      </section>
 
+      <!-- 招待コード案内 -->
+      <section class="bg-white rounded-2xl shadow p-6 mb-6">
+        <h2 class="text-2xl font-bold mb-2">🔑 メンバー招待</h2>
+        <p class="text-gray-600 mb-4">他のメンバーに以下の招待コードを共有してください。個人ページから参加登録を行えます。</p>
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-6 text-center">
+          <p class="text-sm text-indigo-700 font-bold mb-1">現在の招待コード</p>
+          <p id="inviteCodeDisplay" class="text-4xl font-mono font-extrabold text-indigo-900 tracking-wider"></p>
+        </div>
+      </section>
 
-/* =========================================
-   ファイルBase64
-========================================= */
+      <!-- メンバー一覧 -->
+      <section class="bg-white rounded-2xl shadow p-6 mb-6">
+        <h2 class="text-2xl font-bold mb-5">👥 所属メンバー一覧</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b text-left text-gray-600">
+                <th class="p-3">学生番号(ID)</th>
+                <th class="p-3">氏名</th>
+                <th class="p-3">メール</th>
+                <th class="p-3">役割</th>
+              </tr>
+            </thead>
+            <tbody id="membersTable"></tbody>
+          </table>
+        </div>
+      </section>
 
-function fileToBase64(file) {
+      <!-- 申請 -->
+      <section class="bg-white rounded-2xl shadow p-6 mb-6">
+        <h2 class="text-2xl font-bold mb-2">📋 団体向け申請</h2>
+        <p class="text-sm text-gray-500 mb-5">※団体の各種申請・フォーム提出を行えるのは代表者のみです。</p>
+        <div id="formsArea"></div>
+      </section>
 
-  return new Promise((resolve, reject) => {
+      <!-- 履歴 -->
+      <section class="bg-white rounded-2xl shadow p-6">
+        <h2 class="text-2xl font-bold mb-5">提出履歴</h2>
+        <div id="historyArea"></div>
+      </section>
+    </div>
+  </main>
 
-    const reader =
-      new FileReader();
+  <footer class="bg-gray-900 text-gray-400 text-center py-6 mt-12">学園祭実行委員会 統合管理システム</footer>
 
-    reader.onload = () => {
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbx7gn6UibMj5JzjjfNcr3FcQpyAv2V0fX4FXNbv3pb9r1L5C5e7n1fTcAn5GNHg8PZu/exec';
+    let organization = null;
+    let members = [];
+    let forms = [];
+    let submissions = [];
 
-      const result =
-        reader.result;
+    function showMessage(msg, isSuccess = false) {
+      const box = document.getElementById('msgBox');
+      box.textContent = msg;
+      box.className = `mb-6 p-4 rounded-xl border font-semibold ${isSuccess ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200'}`;
+      box.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
-      const base64 =
-        result.split(',')[1];
+    function clearMessage() {
+      document.getElementById('msgBox').classList.add('hidden');
+    }
 
-      resolve({
+    async function api(data) {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(data)
+      });
+      return await response.json();
+    }
 
-        name:
-          file.name,
+    function showAuth(type) {
+      clearMessage();
+      document.getElementById('loginBox').classList.add('hidden');
+      document.getElementById('registerBox').classList.add('hidden');
+      document.getElementById('recoverBox').classList.add('hidden');
+      document.getElementById('tabLogin').className = 'px-5 py-2 rounded-lg bg-gray-200';
+      document.getElementById('tabRegister').className = 'px-5 py-2 rounded-lg bg-gray-200';
+      document.getElementById('tabRecover').className = 'px-5 py-2 rounded-lg bg-gray-200';
 
-        mimeType:
-          file.type,
+      if (type === 'login') {
+        document.getElementById('loginBox').classList.remove('hidden');
+        document.getElementById('tabLogin').className = 'px-5 py-2 rounded-lg bg-indigo-600 text-white';
+      } else if (type === 'register') {
+        document.getElementById('registerBox').classList.remove('hidden');
+        document.getElementById('tabRegister').className = 'px-5 py-2 rounded-lg bg-indigo-600 text-white';
+      } else if (type === 'recover') {
+        document.getElementById('recoverBox').classList.remove('hidden');
+        document.getElementById('tabRecover').className = 'px-5 py-2 rounded-lg bg-indigo-600 text-white';
+      }
+    }
 
-        size:
-          file.size,
+    async function registerOrganization(event) {
+      event.preventDefault();
+      clearMessage();
+      const userId = document.getElementById('regUserId').value;
+      if (!/^\d{4}$/.test(userId)) {
+        showMessage('学生番号(ユーザーID)は4桁の数字を入力してください。');
+        return;
+      }
 
-        base64:
-          base64
-
+      const result = await api({
+        action: 'registerOrganization',
+        org_name: document.getElementById('regOrgName').value,
+        category: document.getElementById('regCategory').value,
+        rep_name: document.getElementById('regRepName').value,
+        rep_email: document.getElementById('regRepEmail').value,
+        user_id: userId,
+        password: document.getElementById('regPassword').value
       });
 
-    };
+      if (!result.success) {
+        showMessage(result.message);
+        return;
+      }
 
-    reader.onerror =
-      reject;
-
-    reader.readAsDataURL(file);
-
-  });
-}
-
-
-/* =========================================
-   ログアウト
-========================================= */
-
-function logout() {
-
-  sessionStorage.removeItem(
-    'festivalOrganization'
-  );
-
-  location.reload();
-}
-
-
-/* =========================================
-   HTMLエスケープ
-========================================= */
-
-function escapeHtml(value) {
-
-  return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
-
-function escapeAttribute(value) {
-
-  return escapeHtml(value);
-}
-
-
-/* =========================================
-   起動
-========================================= */
-
-window.addEventListener(
-  'DOMContentLoaded',
-  async () => {
-
-    const saved =
-      sessionStorage.getItem(
-        'festivalOrganization'
-      );
-
-    if (!saved) return;
-
-    try {
-
-      organization =
-        JSON.parse(saved);
-
-      showDashboard();
-
-      await loadOrganizationData();
-
-    } catch (error) {
-
-      sessionStorage.removeItem(
-        'festivalOrganization'
-      );
-
+      showMessage(`団体登録が完了しました。団体ID: ${result.org_id} / 招待コード: ${result.invite_code}`, true);
+      document.getElementById('loginOrgId').value = result.org_id;
+      document.getElementById('loginPassword').value = document.getElementById('regPassword').value;
+      showAuth('login');
     }
 
-  }
-);
+    async function loginOrganization(event) {
+      event.preventDefault();
+      clearMessage();
+      const result = await api({
+        action: 'loginOrganization',
+        org_id: document.getElementById('loginOrgId').value,
+        password: document.getElementById('loginPassword').value
+      });
 
-</script>
+      if (!result.success) {
+        showMessage(result.message);
+        return;
+      }
 
+      organization = result.organization;
+      sessionStorage.setItem('festivalOrganization', JSON.stringify(organization));
+      showDashboard();
+      await loadOrganizationData();
+    }
+
+    async function recoverOrgId(event) {
+      event.preventDefault();
+      clearMessage();
+      const result = await api({
+        action: 'recoverOrgId',
+        org_name: document.getElementById('recoverOrgName').value,
+        rep_email: document.getElementById('recoverRepEmail').value
+      });
+
+      if (!result.success) {
+        showMessage(result.message);
+        return;
+      }
+
+      showMessage(`団体IDが見つかりました: ${result.org_id}`, true);
+    }
+
+    function showDashboard() {
+      document.getElementById('authArea').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+      document.getElementById('orgNameDisplay').textContent = organization.org_name;
+      document.getElementById('orgIdDisplay').textContent = '団体ID: ' + organization.org_id;
+    }
+
+    async function loadOrganizationData() {
+      const result = await api({
+        action: 'getOrgDetails',
+        org_id: organization.org_id
+      });
+
+      if (!result.success) {
+        showMessage(result.message);
+        return;
+      }
+
+      organization = result.organization;
+      members = result.members;
+      renderOrganization(organization);
+      renderMembers();
+      await loadForms();
+      await loadSubmissions();
+    }
+
+    function renderOrganization(org) {
+      document.getElementById('orgInfo').innerHTML = `
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-sm text-gray-500">団体ID</p>
+          <p class="font-bold">${escapeHtml(org.org_id)}</p>
+        </div>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-sm text-gray-500">団体名</p>
+          <p class="font-bold">${escapeHtml(org.org_name)}</p>
+        </div>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-sm text-gray-500">カテゴリ</p>
+          <p class="font-bold">${escapeHtml(org.category)}</p>
+        </div>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-sm text-gray-500">代表者</p>
+          <p class="font-bold">${escapeHtml(org.rep_name)} (${escapeHtml(org.rep_email)})</p>
+        </div>
+      `;
+      document.getElementById('inviteCodeDisplay').textContent = org.invite_code || '未発行';
+    }
+
+    function renderMembers() {
+      const tbody = document.getElementById('membersTable');
+      tbody.innerHTML = '';
+      members.forEach(member => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b';
+        tr.innerHTML = `
+          <td class="p-3 font-mono font-bold">${escapeHtml(member.user_id)}</td>
+          <td class="p-3">${escapeHtml(member.user_name)}</td>
+          <td class="p-3">${escapeHtml(member.email)}</td>
+          <td class="p-3"><span class="px-2 py-1 text-xs rounded ${member.role === '代表者' ? 'bg-indigo-100 text-indigo-800 font-bold' : 'bg-gray-100'}">${escapeHtml(member.role)}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function loadForms() {
+      const result = await api({
+        action: 'getFormsForTarget',
+        target_type: 'organization'
+      });
+      if (!result.success) {
+        showMessage(result.message);
+        return;
+      }
+      forms = result.forms;
+      renderForms();
+    }
+
+    function renderForms() {
+      const area = document.getElementById('formsArea');
+      area.innerHTML = '';
+      if (forms.length === 0) {
+        area.innerHTML = '<p class="text-gray-500">現在、団体向けの申請フォームはありません。</p>';
+        return;
+      }
+
+      forms.forEach(form => {
+        const card = document.createElement('div');
+        card.className = 'border rounded-xl p-6 mb-6 bg-gray-50';
+
+        let fieldsHtml = '';
+        form.fields.forEach((field, index) => {
+          const fieldName = field.name || ('field_' + index);
+          const label = field.label || fieldName;
+          const type = field.type || 'text';
+
+          if (type === 'textarea') {
+            fieldsHtml += `
+              <div class="mb-4">
+                <label class="block font-bold mb-2">${escapeHtml(label)}</label>
+                <textarea data-form="${form.form_id}" data-field="${escapeHtml(fieldName)}" rows="3" class="form-field w-full border rounded-lg px-4 py-3 bg-white"></textarea>
+              </div>
+            `;
+          } else {
+            fieldsHtml += `
+              <div class="mb-4">
+                <label class="block font-bold mb-2">${escapeHtml(label)}</label>
+                <input type="${escapeHtml(type)}" data-form="${form.form_id}" data-field="${escapeHtml(fieldName)}" class="form-field w-full border rounded-lg px-4 py-3 bg-white">
+              </div>
+            `;
+          }
+        });
+
+        card.innerHTML = `
+          <h3 class="text-xl font-bold mb-2">${escapeHtml(form.title)}</h3>
+          <p class="text-red-600 font-bold mb-5">締切: ${escapeHtml(form.deadline)}</p>
+          ${fieldsHtml}
+          <div class="mb-4">
+            <label class="block font-bold mb-2">添付ファイル (10MB以下)</label>
+            <input type="file" id="file_${form.form_id}" class="w-full border rounded-lg px-4 py-3 bg-white">
+          </div>
+          <button onclick="submitApplication('${form.form_id}')" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700">代表者として申請を提出する</button>
+        `;
+        area.appendChild(card);
+      });
+    }
+
+    async function submitApplication(formId) {
+      clearMessage();
+      const form = forms.find(f => f.form_id === formId);
+      if (!form) return;
+
+      const data = {};
+      document.querySelectorAll(`.form-field[data-form="${formId}"]`).forEach(input => {
+        data[input.dataset.field] = input.value;
+      });
+
+      const fileInput = document.getElementById('file_' + formId);
+      let file = null;
+      if (fileInput && fileInput.files && fileInput.files.length > 0) {
+        const selectedFile = fileInput.files[0];
+        if (selectedFile.size > 10 * 1024 * 1024) {
+          showMessage('ファイルは10MB以下にしてください。');
+          return;
+        }
+        file = await fileToBase64(selectedFile);
+      }
+
+      // 代表者ログインチェック
+      const currentOrgUser = members.find(m => m.role === '代表者');
+
+      const result = await api({
+        action: 'submitForm',
+        form_id: formId,
+        target_id: organization.org_id,
+        submitter_name: organization.rep_name,
+        requester_user_id: currentOrgUser ? currentOrgUser.user_id : '',
+        data: data,
+        file: file
+      });
+
+      if (!result.success) {
+        showMessage(result.message);
+        return;
+      }
+
+      showMessage(result.message, true);
+      await loadSubmissions();
+    }
+
+    async function loadSubmissions() {
+      const result = await api({
+        action: 'getSubmissionsForTarget',
+        target_id: organization.org_id
+      });
+      if (!result.success) return;
+      submissions = result.submissions;
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const area = document.getElementById('historyArea');
+      area.innerHTML = '';
+      if (submissions.length === 0) {
+        area.innerHTML = '<p class="text-gray-500">提出履歴はありません。</p>';
+        return;
+      }
+
+      submissions.slice().reverse().forEach(submission => {
+        const form = forms.find(f => f.form_id === submission.form_id);
+        const title = form ? form.title : submission.form_id;
+
+        const card = document.createElement('div');
+        card.className = 'border rounded-xl p-5 mb-4 bg-white';
+
+        let statusClass = 'bg-gray-100 text-gray-800';
+        if (submission.status === '承認') statusClass = 'bg-green-100 text-green-800';
+        if (submission.status === '差戻し') statusClass = 'bg-red-100 text-red-800';
+        if (submission.status === '審査中') statusClass = 'bg-yellow-100 text-yellow-800';
+
+        card.innerHTML = `
+          <div class="flex flex-col md:flex-row md:justify-between gap-3">
+            <div>
+              <h3 class="font-bold text-lg">${escapeHtml(title)}</h3>
+              <p class="text-sm text-gray-500">${escapeHtml(String(submission.submitted_at))}</p>
+            </div>
+            <span class="px-3 py-1 rounded-full font-bold ${statusClass}">${escapeHtml(submission.status)}</span>
+          </div>
+          ${submission.comment ? `
+            <div class="mt-4 bg-red-50 border border-red-200 p-4 rounded-lg">
+              <p class="font-bold text-red-700">差戻し理由</p>
+              <p class="mt-1 text-sm text-red-900">${escapeHtml(submission.comment)}</p>
+            </div>
+          ` : ''}
+          <div class="flex flex-wrap gap-2 mt-4">
+            ${submission.generated_pdf_url ? `<a href="${escapeAttribute(submission.generated_pdf_url)}" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-blue-700">📄 申請書PDF</a>` : ''}
+            ${submission.file_url ? `<a href="${escapeAttribute(submission.file_url)}" target="_blank" class="bg-gray-700 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-gray-800">📎 添付ファイル</a>` : ''}
+          </div>
+        `;
+        area.appendChild(card);
+      });
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          resolve({
+            name: file.name,
+            mimeType: file.type,
+            size: file.size,
+            base64: reader.result.split(',')[1]
+          });
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function logout() {
+      sessionStorage.removeItem('festivalOrganization');
+      location.reload();
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function escapeAttribute(value) {
+      return escapeHtml(value);
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      const saved = sessionStorage.getItem('festivalOrganization');
+      if (!saved) return;
+      try {
+        organization = JSON.parse(saved);
+        showDashboard();
+        await loadOrganizationData();
+      } catch (error) {
+        sessionStorage.removeItem('festivalOrganization');
+      }
+    });
+  </script>
 </body>
 </html>
