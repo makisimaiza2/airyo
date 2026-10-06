@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>団体ダッシュボード | 学祭運営ポータル</title>
+  <style>
+    body { font-family: sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+    .container { max-width: 700px; margin: 0 auto; }
+    .card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    h2, h3 { margin-top: 0; color: #333; }
+    .invite-box { background: #e8f0fe; border-left: 4px solid #1a73e8; padding: 12px; margin-top: 10px; word-break: break-all; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border-bottom: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f8f9fa; }
+    .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; background: #e0e0e0; }
+    .badge-rep { background: #ffd700; color: #333; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="card">
+      <h2 id="org-name">読み込み中...</h2>
+      <p><strong>出展区分:</strong> <span id="org-cat">-</span></p>
+      <p><strong>代表者:</strong> <span id="org-rep">-</span></p>
+    </div>
+
+    <div class="card">
+      <h3>👥 メンバー招待・追加</h3>
+      <p>以下の団体IDまたは招待用URLを新規メンバーに共有してください。</p>
+      <div class="invite-box">
+        <strong>団体ID:</strong> <span id="invite-org-id" style="font-size:1.1em; color:#1a73e8;">-</span><br>
+        <strong>招待URL:</strong> <span id="invite-url">-</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📋 所属メンバー一覧 (<span id="member-count">0</span>名)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>氏名</th>
+            <th>メールアドレス</th>
+            <th>役割</th>
+          </tr>
+        </thead>
+        <tbody id="member-list">
+          <tr><td colspan="3">読み込み中...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // ★ご自身のGASデプロイURLに書き換えてください★
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx7gn6UibMj5JzjjfNcr3FcQpyAv2V0fX4FXNbv3pb9r1L5C5e7n1fTcAn5GNHg8PZu/exec";
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const orgId = urlParams.get('org_id');
+
+    if (!orgId) {
+      alert("団体IDが指定されていません。");
+    } else {
+      loadOrgData();
+    }
+
+    async function loadOrgData() {
+      try {
+        const response = await fetch(`${GAS_API_URL}?action=getOrgDetails&org_id=${encodeURIComponent(orgId)}`);
+        const data = await response.json();
+
+        if (data.status === 'success') {
+          const org = data.organization;
+          document.getElementById('org-name').textContent = org.org_name;
+          document.getElementById('org-cat').textContent = org.category;
+          document.getElementById('org-rep').textContent = `${org.rep_name} (${org.rep_email})`;
+
+          document.getElementById('invite-org-id').textContent = org.org_id;
+          const joinUrl = `${window.location.origin}${window.location.pathname.replace('group.html', 'user.html')}?join=${org.org_id}`;
+          document.getElementById('invite-url').textContent = joinUrl;
+
+          // メンバー一覧レンダリング
+          const memberListEl = document.getElementById('member-list');
+          memberListEl.innerHTML = '';
+          document.getElementById('member-count').textContent = data.members.length;
+
+          data.members.forEach(m => {
+            const tr = document.createElement('tr');
+            const isRep = m.role === '代表者';
+            tr.innerHTML = `
+              <td>${m.user_name}</td>
+              <td>${m.email}</td>
+              <td><span class="badge ${isRep ? 'badge-rep' : ''}">${m.role}</span></td>
+            `;
+            memberListEl.appendChild(tr);
+          });
+
+        } else {
+          alert('団体情報の取得に失敗しました: ' + data.message);
+        }
+      } catch (err) {
+        alert('通信エラーが発生しました: ' + err);
+      }
+    }
+  </script>
+</body>
+</html>
