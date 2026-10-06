@@ -1,1061 +1,439 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>個人ページ - 学園祭実行委員会 統合管理システム</title>
-
   <script src="https://cdn.tailwindcss.com"></script>
-
 </head>
-
-
 <body class="bg-gray-100 min-h-screen">
+  <header class="bg-indigo-600 text-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <a href="index.html" class="text-xl font-bold">学園祭実行委員会 統合管理システム</a>
+        <nav class="flex flex-wrap gap-2">
+          <a href="index.html" class="px-4 py-2 rounded-lg hover:bg-white/20">🏠 メイン</a>
+          <a href="group.html" class="px-4 py-2 rounded-lg hover:bg-white/20">🏢 団体</a>
+          <a href="user.html" class="px-4 py-2 rounded-lg bg-white/20">👤 個人</a>
+          <a href="admin.html" class="px-4 py-2 rounded-lg hover:bg-white/20">⚙️ 管理者</a>
+        </nav>
+      </div>
+    </div>
+  </header>
 
+  <main class="max-w-5xl mx-auto px-4 py-8">
+    <div id="msgBox" class="hidden mb-6 p-4 rounded-xl border font-semibold"></div>
 
-<header class="bg-indigo-600 text-white shadow-lg">
+    <!-- 認証エリア -->
+    <div id="authArea" class="bg-white rounded-2xl shadow p-6">
+      <div class="flex flex-wrap gap-2 mb-6">
+        <button onclick="showAuth('login')" id="loginTab" class="bg-indigo-600 text-white px-5 py-2 rounded-lg">個人ログイン</button>
+        <button onclick="showAuth('join')" id="joinTab" class="bg-gray-200 px-5 py-2 rounded-lg">招待コードで団体登録</button>
+        <button onclick="showAuth('recover')" id="recoverTab" class="bg-gray-200 px-5 py-2 rounded-lg">ID回復</button>
+      </div>
 
-  <div class="max-w-7xl mx-auto px-4 py-4">
+      <!-- ログイン -->
+      <div id="loginBox">
+        <h1 class="text-2xl font-bold mb-5">👤 個人ログイン</h1>
+        <form onsubmit="loginUser(event)" class="space-y-4">
+          <input id="userId" maxlength="4" pattern="\d{4}" required placeholder="ユーザーID (学生番号4桁 例: 6303)" class="w-full border rounded-lg px-4 py-3">
+          <input id="userPassword" type="password" required placeholder="パスワード" class="w-full border rounded-lg px-4 py-3">
+          <button class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700">ログイン</button>
+        </form>
+      </div>
 
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <!-- 招待コードで参加登録 -->
+      <div id="joinBox" class="hidden">
+        <h1 class="text-2xl font-bold mb-2">🔑 招待コードで団体に参加</h1>
+        <p class="text-gray-500 text-sm mb-5">代表者から共有された招待コードを入力して団体メンバーに登録します。（複数団体登録可能）</p>
+        <form onsubmit="joinOrganization(event)" class="space-y-4">
+          <input id="joinInviteCode" required placeholder="招待コード (6桁 例: A1B2C3)" class="w-full border rounded-lg px-4 py-3 font-mono uppercase">
+          <input id="joinUserId" maxlength="4" pattern="\d{4}" required placeholder="あなたの学生番号 (4桁数字 例: 6303)" class="w-full border rounded-lg px-4 py-3">
+          <input id="joinUserName" required placeholder="氏名" class="w-full border rounded-lg px-4 py-3">
+          <input id="joinEmail" type="email" required placeholder="メールアドレス" class="w-full border rounded-lg px-4 py-3">
+          <input id="joinRole" placeholder="役割 (任意 例: 会計, 広報)" class="w-full border rounded-lg px-4 py-3">
+          <input id="joinPassword" type="password" required placeholder="ログインパスワード" class="w-full border rounded-lg px-4 py-3">
+          <button class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">団体に登録・参加する</button>
+        </form>
+      </div>
 
-      <a href="index.html"
-         class="text-xl font-bold">
-
-        学園祭実行委員会 統合管理システム
-
-      </a>
-
-
-      <nav class="flex flex-wrap gap-2">
-
-        <a href="index.html"
-           class="px-4 py-2 rounded-lg hover:bg-white/20">
-
-          🏠 メイン
-
-        </a>
-
-        <a href="group.html"
-           class="px-4 py-2 rounded-lg hover:bg-white/20">
-
-          🏢 団体
-
-        </a>
-
-        <a href="user.html"
-           class="px-4 py-2 rounded-lg bg-white/20">
-
-          👤 個人
-
-        </a>
-
-        <a href="admin.html"
-           class="px-4 py-2 rounded-lg hover:bg-white/20">
-
-          ⚙️ 管理者
-
-        </a>
-
-      </nav>
-
+      <!-- ID回復 -->
+      <div id="recoverBox" class="hidden">
+        <h1 class="text-2xl font-bold mb-5">🔍 ユーザーID回復</h1>
+        <form onsubmit="recoverUser(event)" class="space-y-4">
+          <input id="recoverUserName" required placeholder="氏名" class="w-full border rounded-lg px-4 py-3">
+          <input id="recoverUserEmail" type="email" required placeholder="メールアドレス" class="w-full border rounded-lg px-4 py-3">
+          <button class="w-full bg-gray-700 text-white py-3 rounded-lg font-bold hover:bg-gray-800">ユーザーIDを確認</button>
+        </form>
+      </div>
     </div>
 
-  </div>
-
-</header>
-
-
-<main class="max-w-5xl mx-auto px-4 py-8">
-
-
-  <!-- 認証 -->
-
-  <div id="authArea"
-       class="bg-white rounded-2xl shadow p-6">
-
-    <div class="flex flex-wrap gap-2 mb-6">
-
-      <button
-        onclick="showAuth('login')"
-        id="loginTab"
-        class="bg-indigo-600 text-white px-5 py-2 rounded-lg">
-
-        個人ログイン
-
-      </button>
-
-      <button
-        onclick="showAuth('recover')"
-        id="recoverTab"
-        class="bg-gray-200 px-5 py-2 rounded-lg">
-
-        ID回復
-
-      </button>
-
-    </div>
-
-
-    <!-- ログイン -->
-
-    <div id="loginBox">
-
-      <h1 class="text-2xl font-bold mb-5">
-        👤 個人ログイン
-      </h1>
-
-
-      <form
-        onsubmit="loginUser(event)"
-        class="space-y-4">
-
-        <input
-          id="userId"
-          required
-          placeholder="ユーザーID"
-          class="w-full border rounded-lg px-4 py-3">
-
-
-        <input
-          id="userPassword"
-          type="password"
-          required
-          placeholder="パスワード"
-          class="w-full border rounded-lg px-4 py-3">
-
-
-        <button
-          class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold">
-
-          ログイン
-
-        </button>
-
-      </form>
-
-    </div>
-
-
-    <!-- ID回復 -->
-
-    <div id="recoverBox"
-         class="hidden">
-
-      <h1 class="text-2xl font-bold mb-5">
-        🔎 ユーザーID回復
-      </h1>
-
-
-      <form
-        onsubmit="recoverUser(event)"
-        class="space-y-4">
-
-        <input
-          id="recoverUserName"
-          required
-          placeholder="氏名"
-          class="w-full border rounded-lg px-4 py-3">
-
-
-        <input
-          id="recoverUserEmail"
-          type="email"
-          required
-          placeholder="メールアドレス"
-          class="w-full border rounded-lg px-4 py-3">
-
-
-        <button
-          class="w-full bg-gray-700 text-white py-3 rounded-lg font-bold">
-
-          ユーザーIDを確認
-
-        </button>
-
-      </form>
-
-    </div>
-
-  </div>
-
-
-  <!-- ダッシュボード -->
-
-  <div id="dashboard"
-       class="hidden">
-
-
-    <section class="bg-white rounded-2xl shadow p-6 mb-6">
-
-      <div class="flex flex-col md:flex-row md:justify-between gap-4">
-
-        <div>
-
-          <p class="text-gray-500">
-            ログイン中
-          </p>
-
-          <h1 id="userNameDisplay"
-              class="text-3xl font-bold">
-          </h1>
-
-          <p id="userIdDisplay"
-             class="text-gray-500">
-          </p>
-
+    <!-- ダッシュボード -->
+    <div id="dashboard" class="hidden">
+      <section class="bg-white rounded-2xl shadow p-6 mb-6">
+        <div class="flex flex-col md:flex-row md:justify-between gap-4">
+          <div>
+            <p class="text-gray-500">ログイン中</p>
+            <h1 id="userNameDisplay" class="text-3xl font-bold"></h1>
+            <p id="userIdDisplay" class="text-gray-500 font-mono"></p>
+          </div>
+          <button onclick="logout()" class="bg-red-500 text-white px-5 py-3 rounded-lg hover:bg-red-600 font-bold">ログアウト</button>
         </div>
-
-
-        <button
-          onclick="logout()"
-          class="bg-red-500 text-white px-5 py-3 rounded-lg">
-
-          ログアウト
-
-        </button>
-
-      </div>
-
-    </section>
-
-
-    <section class="bg-white rounded-2xl shadow p-6 mb-6">
-
-      <h2 class="text-2xl font-bold mb-5">
-        📋 個人向け申請
-      </h2>
-
-      <div id="formsArea">
-      </div>
-
-    </section>
-
-
-    <section class="bg-white rounded-2xl shadow p-6">
-
-      <h2 class="text-2xl font-bold mb-5">
-        📂 提出履歴
-      </h2>
-
-      <div id="historyArea">
-      </div>
-
-    </section>
-
-
-  </div>
-
-</main>
-
-
-<footer class="bg-gray-900 text-gray-400 text-center py-6 mt-12">
-
-  学園祭実行委員会 統合管理システム
-
-</footer>
-
-
-<script>
-
-const API_URL =
-  'https://script.google.com/macros/s/AKfycbx7gn6UibMj5JzjjfNcr3FcQpyAv2V0fX4FXNbv3pb9r1L5C5e7n1fTcAn5GNHg8PZu/execL';
-
-
-let user = null;
-let forms = [];
-let submissions = [];
-
-
-/* =========================================
-   API
-========================================= */
-
-async function api(data) {
-
-  const response = await fetch(API_URL, {
-
-    method: 'POST',
-
-    body: JSON.stringify(data)
-
-  });
-
-  return await response.json();
-}
-
-
-/* =========================================
-   認証切替
-========================================= */
-
-function showAuth(type) {
-
-  document
-    .getElementById('loginBox')
-    .classList.add('hidden');
-
-  document
-    .getElementById('recoverBox')
-    .classList.add('hidden');
-
-
-  document
-    .getElementById('loginTab')
-    .className =
-      'bg-gray-200 px-5 py-2 rounded-lg';
-
-  document
-    .getElementById('recoverTab')
-    .className =
-      'bg-gray-200 px-5 py-2 rounded-lg';
-
-
-  if (type === 'login') {
-
-    document
-      .getElementById('loginBox')
-      .classList.remove('hidden');
-
-    document
-      .getElementById('loginTab')
-      .className =
-        'bg-indigo-600 text-white px-5 py-2 rounded-lg';
-
-  } else {
-
-    document
-      .getElementById('recoverBox')
-      .classList.remove('hidden');
-
-    document
-      .getElementById('recoverTab')
-      .className =
-        'bg-indigo-600 text-white px-5 py-2 rounded-lg';
-
-  }
-
-}
-
-
-/* =========================================
-   ログイン
-========================================= */
-
-async function loginUser(event) {
-
-  event.preventDefault();
-
-
-  const result = await api({
-
-    action: 'loginUser',
-
-    user_id:
-      document.getElementById('userId').value,
-
-    password:
-      document.getElementById('userPassword').value
-
-  });
-
-
-  if (!result.success) {
-
-    alert(result.message);
-    return;
-
-  }
-
-
-  user = result.user;
-
-
-  sessionStorage.setItem(
-    'festivalUser',
-    JSON.stringify(user)
-  );
-
-
-  showDashboard();
-
-  await loadForms();
-
-  await loadSubmissions();
-
-}
-
-
-/* =========================================
-   ID回復
-========================================= */
-
-async function recoverUser(event) {
-
-  event.preventDefault();
-
-
-  const result = await api({
-
-    action: 'recoverUserId',
-
-    user_name:
-      document.getElementById('recoverUserName').value,
-
-    email:
-      document.getElementById('recoverUserEmail').value
-
-  });
-
-
-  if (!result.success) {
-
-    alert(result.message);
-    return;
-
-  }
-
-
-  const ids =
-    result.users
-      .map(user => user.user_id)
-      .join('\n');
-
-
-  alert(
-    '該当するユーザーID：\n\n' +
-    ids
-  );
-
-}
-
-
-/* =========================================
-   ダッシュボード
-========================================= */
-
-function showDashboard() {
-
-  document
-    .getElementById('authArea')
-    .classList.add('hidden');
-
-
-  document
-    .getElementById('dashboard')
-    .classList.remove('hidden');
-
-
-  document
-    .getElementById('userNameDisplay')
-    .textContent =
-      user.user_name;
-
-
-  document
-    .getElementById('userIdDisplay')
-    .textContent =
-      'ユーザーID：' +
-      user.user_id;
-
-}
-
-
-/* =========================================
-   フォーム取得
-========================================= */
-
-async function loadForms() {
-
-  const result = await api({
-
-    action: 'getFormsForTarget',
-
-    target_type: 'individual'
-
-  });
-
-
-  if (!result.success) {
-
-    alert(result.message);
-    return;
-
-  }
-
-
-  forms = result.forms;
-
-  renderForms();
-
-}
-
-
-/* =========================================
-   フォーム表示
-========================================= */
-
-function renderForms() {
-
-  const area =
-    document.getElementById('formsArea');
-
-  area.innerHTML = '';
-
-
-  if (forms.length === 0) {
-
-    area.innerHTML = `
-      <p class="text-gray-500">
-        現在、個人向け申請はありません。
-      </p>
-    `;
-
-    return;
-
-  }
-
-
-  forms.forEach(form => {
-
-    const card =
-      document.createElement('div');
-
-    card.className =
-      'border rounded-xl p-6 mb-6';
-
-
-    let fieldsHtml = '';
-
-
-    form.fields.forEach((field, index) => {
-
-      const fieldName =
-        field.name ||
-        'field_' + index;
-
-      const label =
-        field.label ||
-        fieldName;
-
-      const type =
-        field.type ||
-        'text';
-
-
-      if (type === 'textarea') {
-
-        fieldsHtml += `
-
-          <div class="mb-4">
-
-            <label class="block font-bold mb-2">
-
-              ${escapeHtml(label)}
-
-            </label>
-
-            <textarea
-
-              data-form="${form.form_id}"
-
-              data-field="${escapeHtml(fieldName)}"
-
-              rows="4"
-
-              class="form-field w-full border rounded-lg px-4 py-3"
-
-            ></textarea>
-
-          </div>
-
-        `;
-
+      </section>
+
+      <!-- 所属団体一覧（複数団体対応） -->
+      <section class="bg-white rounded-2xl shadow p-6 mb-6">
+        <h2 class="text-2xl font-bold mb-4">🏢 所属団体</h2>
+        <div id="userOrgsArea" class="grid gap-3"></div>
+      </section>
+
+      <!-- 個人向け申請 -->
+      <section class="bg-white rounded-2xl shadow p-6 mb-6">
+        <h2 class="text-2xl font-bold mb-5">📝 個人向け申請</h2>
+        <div id="formsArea"></div>
+      </section>
+
+      <!-- 履歴 -->
+      <section class="bg-white rounded-2xl shadow p-6">
+        <h2 class="text-2xl font-bold mb-5">個人提出履歴</h2>
+        <div id="historyArea"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="bg-gray-900 text-gray-400 text-center py-6 mt-12">学園祭実行委員会 統合管理システム</footer>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbx7gn6UibMj5JzjjfNcr3FcQpyAv2V0fX4FXNbv3pb9r1L5C5e7n1fTcAn5GNHg8PZu/exec';
+    let currentUser = null;
+    let forms = [];
+    let submissions = [];
+
+    function showMessage(msg, isSuccess = false) {
+      const box = document.getElementById('msgBox');
+      box.textContent = msg;
+      box.className = `mb-6 p-4 rounded-xl border font-semibold ${isSuccess ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200'}`;
+      box.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function clearMessage() {
+      document.getElementById('msgBox').classList.add('hidden');
+    }
+
+    async function api(data) {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(data)
+      });
+      return await response.json();
+    }
+
+    function showAuth(type) {
+      clearMessage();
+      document.getElementById('loginBox').classList.add('hidden');
+      document.getElementById('joinBox').classList.add('hidden');
+      document.getElementById('recoverBox').classList.add('hidden');
+      document.getElementById('loginTab').className = 'bg-gray-200 px-5 py-2 rounded-lg';
+      document.getElementById('joinTab').className = 'bg-gray-200 px-5 py-2 rounded-lg';
+      document.getElementById('recoverTab').className = 'bg-gray-200 px-5 py-2 rounded-lg';
+
+      if (type === 'login') {
+        document.getElementById('loginBox').classList.remove('hidden');
+        document.getElementById('loginTab').className = 'bg-indigo-600 text-white px-5 py-2 rounded-lg';
+      } else if (type === 'join') {
+        document.getElementById('joinBox').classList.remove('hidden');
+        document.getElementById('joinTab').className = 'bg-indigo-600 text-white px-5 py-2 rounded-lg';
       } else {
+        document.getElementById('recoverBox').classList.remove('hidden');
+        document.getElementById('recoverTab').className = 'bg-indigo-600 text-white px-5 py-2 rounded-lg';
+      }
+    }
 
-        fieldsHtml += `
-
-          <div class="mb-4">
-
-            <label class="block font-bold mb-2">
-
-              ${escapeHtml(label)}
-
-            </label>
-
-            <input
-
-              type="${escapeHtml(type)}"
-
-              data-form="${form.form_id}"
-
-              data-field="${escapeHtml(fieldName)}"
-
-              class="form-field w-full border rounded-lg px-4 py-3"
-
-            >
-
-          </div>
-
-        `;
-
+    async function loginUser(event) {
+      event.preventDefault();
+      clearMessage();
+      const userId = document.getElementById('userId').value;
+      if (!/^\d{4}$/.test(userId)) {
+        showMessage('ユーザーID(学生番号)は4桁の数字を入力してください。');
+        return;
       }
 
-    });
-
-
-    card.innerHTML = `
-
-      <h3 class="text-xl font-bold mb-2">
-
-        ${escapeHtml(form.title)}
-
-      </h3>
-
-
-      <p class="text-red-600 mb-5">
-
-        締切：${escapeHtml(form.deadline)}
-
-      </p>
-
-
-      ${fieldsHtml}
-
-
-      <div class="mb-4">
-
-        <label class="block font-bold mb-2">
-
-          添付ファイル
-
-        </label>
-
-
-        <input
-
-          type="file"
-
-          id="file_${form.form_id}"
-
-          class="w-full border rounded-lg px-4 py-3">
-
-      </div>
-
-
-      <button
-
-        onclick="submitApplication('${form.form_id}')"
-
-        class="w-full bg-green-600 text-white py-3 rounded-lg font-bold">
-
-        申請を提出する
-
-      </button>
-
-    `;
-
-
-    area.appendChild(card);
-
-  });
-
-}
-
-
-/* =========================================
-   申請
-========================================= */
-
-async function submitApplication(formId) {
-
-  const data = {};
-
-
-  document
-    .querySelectorAll(
-      `.form-field[data-form="${formId}"]`
-    )
-    .forEach(input => {
-
-      data[input.dataset.field] =
-        input.value;
-
-    });
-
-
-  const fileInput =
-    document.getElementById(
-      'file_' + formId
-    );
-
-
-  let file = null;
-
-
-  if (
-    fileInput &&
-    fileInput.files.length
-  ) {
-
-    const selected =
-      fileInput.files[0];
-
-
-    if (
-      selected.size >
-      10 * 1024 * 1024
-    ) {
-
-      alert(
-        'ファイルは10MB以下にしてください。'
-      );
-
-      return;
-
-    }
-
-
-    file =
-      await fileToBase64(selected);
-
-  }
-
-
-  const result = await api({
-
-    action: 'submitForm',
-
-    form_id: formId,
-
-    target_id:
-      user.user_id,
-
-    submitter_name:
-      user.user_name,
-
-    data: data,
-
-    file: file
-
-  });
-
-
-  if (!result.success) {
-
-    alert(result.message);
-    return;
-
-  }
-
-
-  alert(result.message);
-
-  await loadSubmissions();
-
-}
-
-
-/* =========================================
-   履歴
-========================================= */
-
-async function loadSubmissions() {
-
-  const result = await api({
-
-    action: 'getSubmissionsForTarget',
-
-    target_id:
-      user.user_id
-
-  });
-
-
-  if (!result.success) return;
-
-
-  submissions =
-    result.submissions;
-
-
-  renderHistory();
-
-}
-
-
-function renderHistory() {
-
-  const area =
-    document.getElementById('historyArea');
-
-  area.innerHTML = '';
-
-
-  if (!submissions.length) {
-
-    area.innerHTML = `
-      <p class="text-gray-500">
-        提出履歴はありません。
-      </p>
-    `;
-
-    return;
-
-  }
-
-
-  submissions
-    .slice()
-    .reverse()
-    .forEach(sub => {
-
-      const form =
-        forms.find(
-          f => f.form_id === sub.form_id
-        );
-
-
-      const title =
-        form
-          ? form.title
-          : sub.form_id;
-
-
-      const card =
-        document.createElement('div');
-
-      card.className =
-        'border rounded-xl p-5 mb-4';
-
-
-      card.innerHTML = `
-
-        <div class="flex justify-between gap-4">
-
-          <div>
-
-            <h3 class="font-bold text-lg">
-
-              ${escapeHtml(title)}
-
-            </h3>
-
-            <p class="text-sm text-gray-500">
-
-              ${escapeHtml(String(sub.submitted_at))}
-
-            </p>
-
-          </div>
-
-
-          <span class="px-3 py-1 rounded-full bg-gray-100">
-
-            ${escapeHtml(sub.status)}
-
-          </span>
-
-        </div>
-
-
-        ${
-          sub.comment
-          ? `
-
-            <div class="mt-4 bg-red-50 p-4 rounded-lg">
-
-              <strong class="text-red-700">
-
-                差戻し理由
-
-              </strong>
-
-              <p class="mt-1">
-
-                ${escapeHtml(sub.comment)}
-
-              </p>
-
-            </div>
-
-          `
-          : ''
-        }
-
-
-        <div class="flex flex-wrap gap-2 mt-4">
-
-          ${
-            sub.generated_pdf_url
-            ? `
-
-              <a
-
-                href="${escapeHtml(sub.generated_pdf_url)}"
-
-                target="_blank"
-
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg">
-
-                📄 申請書PDFをダウンロード（教員署名用）
-
-              </a>
-
-            `
-            : ''
-          }
-
-
-          ${
-            sub.file_url
-            ? `
-
-              <a
-
-                href="${escapeHtml(sub.file_url)}"
-
-                target="_blank"
-
-                class="bg-gray-700 text-white px-4 py-2 rounded-lg">
-
-                📎 添付ファイル
-
-              </a>
-
-            `
-            : ''
-          }
-
-        </div>
-
-      `;
-
-
-      area.appendChild(card);
-
-    });
-
-}
-
-
-/* =========================================
-   Base64
-========================================= */
-
-function fileToBase64(file) {
-
-  return new Promise((resolve, reject) => {
-
-    const reader =
-      new FileReader();
-
-
-    reader.onload = () => {
-
-      resolve({
-
-        name:
-          file.name,
-
-        mimeType:
-          file.type,
-
-        size:
-          file.size,
-
-        base64:
-          reader.result.split(',')[1]
-
+      const result = await api({
+        action: 'loginUser',
+        user_id: userId,
+        password: document.getElementById('userPassword').value
       });
 
-    };
+      if (!result.success) {
+        showMessage(result.message);
+        return;
+      }
 
-
-    reader.onerror =
-      reject;
-
-
-    reader.readAsDataURL(file);
-
-  });
-
-}
-
-
-/* =========================================
-   ログアウト
-========================================= */
-
-function logout() {
-
-  sessionStorage.removeItem(
-    'festivalUser'
-  );
-
-  location.reload();
-
-}
-
-
-/* =========================================
-   Escape
-========================================= */
-
-function escapeHtml(value) {
-
-  return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-
-}
-
-
-/* =========================================
-   起動
-========================================= */
-
-window.addEventListener(
-  'DOMContentLoaded',
-  async () => {
-
-    const saved =
-      sessionStorage.getItem(
-        'festivalUser'
-      );
-
-
-    if (!saved) return;
-
-
-    try {
-
-      user =
-        JSON.parse(saved);
-
+      currentUser = result;
+      sessionStorage.setItem('festivalUser', JSON.stringify(currentUser));
       showDashboard();
-
       await loadForms();
-
       await loadSubmissions();
-
-    } catch (e) {
-
-      sessionStorage.removeItem(
-        'festivalUser'
-      );
-
     }
 
-  }
-);
+    async function joinOrganization(event) {
+      event.preventDefault();
+      clearMessage();
+      const userId = document.getElementById('joinUserId').value;
+      if (!/^\d{4}$/.test(userId)) {
+        showMessage('学生番号は4桁の数字を入力してください。');
+        return;
+      }
 
-</script>
+      const result = await api({
+        action: 'joinOrganizationByCode',
+        invite_code: document.getElementById('joinInviteCode').value.trim(),
+        user_id: userId,
+        user_name: document.getElementById('joinUserName').value,
+        email: document.getElementById('joinEmail').value,
+        role: document.getElementById('joinRole').value,
+        password: document.getElementById('joinPassword').value
+      });
 
+      if (!result.success) {
+        showMessage(result.message);
+        return;
+      }
+
+      showMessage(result.message, true);
+      document.getElementById('userId').value = userId;
+      document.getElementById('userPassword').value = document.getElementById('joinPassword').value;
+      showAuth('login');
+    }
+
+    async function recoverUser(event) {
+      event.preventDefault();
+      clearMessage();
+      const result = await api({
+        action: 'recoverUserId',
+        user_name: document.getElementById('recoverUserName').value,
+        email: document.getElementById('recoverUserEmail').value
+      });
+
+      if (!result.success) {
+        showMessage(result.message);
+        return;
+      }
+
+      const ids = Array.from(new Set(result.users.map(u => u.user_id))).join(', ');
+      showMessage(`該当するユーザーID(学生番号): ${ids}`, true);
+    }
+
+    function showDashboard() {
+      document.getElementById('authArea').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+      document.getElementById('userNameDisplay').textContent = currentUser.user_name;
+      document.getElementById('userIdDisplay').textContent = '学生番号: ' + currentUser.user_id;
+
+      const orgsArea = document.getElementById('userOrgsArea');
+      orgsArea.innerHTML = '';
+      currentUser.organizations.forEach(org => {
+        const div = document.createElement('div');
+        div.className = 'border rounded-lg p-4 bg-gray-50 flex justify-between items-center';
+        div.innerHTML = `
+          <div>
+            <p class="font-bold text-lg">団体ID: ${escapeHtml(org.org_id)}</p>
+            <p class="text-sm text-gray-600">役割: ${escapeHtml(org.role)}</p>
+          </div>
+          <span class="px-3 py-1 bg-indigo-100 text-indigo-800 font-bold text-xs rounded-full">登録済み</span>
+        `;
+        orgsArea.appendChild(div);
+      });
+    }
+
+    async function loadForms() {
+      const result = await api({
+        action: 'getFormsForTarget',
+        target_type: 'individual'
+      });
+      if (!result.success) {
+        showMessage(result.message);
+        return;
+      }
+      forms = result.forms;
+      renderForms();
+    }
+
+    function renderForms() {
+      const area = document.getElementById('formsArea');
+      area.innerHTML = '';
+      if (forms.length === 0) {
+        area.innerHTML = '<p class="text-gray-500">現在、個人向けの申請はありません。</p>';
+        return;
+      }
+
+      forms.forEach(form => {
+        const card = document.createElement('div');
+        card.className = 'border rounded-xl p-6 mb-6 bg-gray-50';
+
+        let fieldsHtml = '';
+        form.fields.forEach((field, index) => {
+          const fieldName = field.name || ('field_' + index);
+          const label = field.label || fieldName;
+          const type = field.type || 'text';
+
+          if (type === 'textarea') {
+            fieldsHtml += `
+              <div class="mb-4">
+                <label class="block font-bold mb-2">${escapeHtml(label)}</label>
+                <textarea data-form="${form.form_id}" data-field="${escapeHtml(fieldName)}" rows="3" class="form-field w-full border rounded-lg px-4 py-3 bg-white"></textarea>
+              </div>
+            `;
+          } else {
+            fieldsHtml += `
+              <div class="mb-4">
+                <label class="block font-bold mb-2">${escapeHtml(label)}</label>
+                <input type="${escapeHtml(type)}" data-form="${form.form_id}" data-field="${escapeHtml(fieldName)}" class="form-field w-full border rounded-lg px-4 py-3 bg-white">
+              </div>
+            `;
+          }
+        });
+
+        card.innerHTML = `
+          <h3 class="text-xl font-bold mb-2">${escapeHtml(form.title)}</h3>
+          <p class="text-red-600 font-bold mb-5">締切: ${escapeHtml(form.deadline)}</p>
+          ${fieldsHtml}
+          <div class="mb-4">
+            <label class="block font-bold mb-2">添付ファイル (10MB以下)</label>
+            <input type="file" id="file_${form.form_id}" class="w-full border rounded-lg px-4 py-3 bg-white">
+          </div>
+          <button onclick="submitApplication('${form.form_id}')" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">個人申請を提出する</button>
+        `;
+        area.appendChild(card);
+      });
+    }
+
+    async function submitApplication(formId) {
+      clearMessage();
+      const data = {};
+      document.querySelectorAll(`.form-field[data-form="${formId}"]`).forEach(input => {
+        data[input.dataset.field] = input.value;
+      });
+
+      const fileInput = document.getElementById('file_' + formId);
+      let file = null;
+      if (fileInput && fileInput.files && fileInput.files.length > 0) {
+        const selected = fileInput.files[0];
+        if (selected.size > 10 * 1024 * 1024) {
+          showMessage('ファイルは10MB以下にしてください。');
+          return;
+        }
+        file = await fileToBase64(selected);
+      }
+
+      const result = await api({
+        action: 'submitForm',
+        form_id: formId,
+        target_id: currentUser.user_id,
+        submitter_name: currentUser.user_name,
+        data: data,
+        file: file
+      });
+
+      if (!result.success) {
+        showMessage(result.message);
+        return;
+      }
+
+      showMessage(result.message, true);
+      await loadSubmissions();
+    }
+
+    async function loadSubmissions() {
+      const result = await api({
+        action: 'getSubmissionsForTarget',
+        target_id: currentUser.user_id
+      });
+      if (!result.success) return;
+      submissions = result.submissions;
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const area = document.getElementById('historyArea');
+      area.innerHTML = '';
+      if (!submissions.length) {
+        area.innerHTML = '<p class="text-gray-500">提出履歴はありません。</p>';
+        return;
+      }
+
+      submissions.slice().reverse().forEach(sub => {
+        const form = forms.find(f => f.form_id === sub.form_id);
+        const title = form ? form.title : sub.form_id;
+
+        const card = document.createElement('div');
+        card.className = 'border rounded-xl p-5 mb-4 bg-white';
+        card.innerHTML = `
+          <div class="flex justify-between gap-4">
+            <div>
+              <h3 class="font-bold text-lg">${escapeHtml(title)}</h3>
+              <p class="text-sm text-gray-500">${escapeHtml(String(sub.submitted_at))}</p>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-gray-100 font-bold text-sm h-fit">${escapeHtml(sub.status)}</span>
+          </div>
+          ${sub.comment ? `
+            <div class="mt-4 bg-red-50 p-4 rounded-lg border border-red-200">
+              <strong class="text-red-700">差戻し理由</strong>
+              <p class="mt-1 text-sm text-red-900">${escapeHtml(sub.comment)}</p>
+            </div>
+          ` : ''}
+          <div class="flex flex-wrap gap-2 mt-4">
+            ${sub.generated_pdf_url ? `<a href="${escapeHtml(sub.generated_pdf_url)}" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700">📄 申請書PDF</a>` : ''}
+            ${sub.file_url ? `<a href="${escapeHtml(sub.file_url)}" target="_blank" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-800">📎 添付ファイル</a>` : ''}
+          </div>
+        `;
+        area.appendChild(card);
+      });
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          resolve({
+            name: file.name,
+            mimeType: file.type,
+            size: file.size,
+            base64: reader.result.split(',')[1]
+          });
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function logout() {
+      sessionStorage.removeItem('festivalUser');
+      location.reload();
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      const saved = sessionStorage.getItem('festivalUser');
+      if (!saved) return;
+      try {
+        currentUser = JSON.parse(saved);
+        showDashboard();
+        await loadForms();
+        await loadSubmissions();
+      } catch (e) {
+        sessionStorage.removeItem('festivalUser');
+      }
+    });
+  </script>
 </body>
 </html>
