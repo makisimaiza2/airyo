@@ -2,685 +2,981 @@
 <html lang="ja">
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>学園祭実行委員会 - 個人マイページ</title>
+  <title>個人ページ - 学園祭実行委員会 統合管理システム</title>
 
-<script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
 
-<body class="bg-slate-100 text-slate-800">
 
-<header class="bg-indigo-700 text-white">
-  <div class="max-w-5xl mx-auto px-4 py-5">
-
-    <h1 class="text-2xl font-bold">
-      学園祭実行委員会
-    </h1>
-
-    <p class="text-indigo-200">
-      個人マイページ
-    </p>
-
-  </div>
-</header>
+<body class="bg-gray-100 min-h-screen">
 
 
-<main class="max-w-5xl mx-auto p-4 md:p-8">
+<header class="bg-indigo-600 text-white shadow-lg">
+
+  <div class="max-w-7xl mx-auto px-4 py-4">
+
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+      <a href="index.html"
+         class="text-xl font-bold">
+
+        学園祭実行委員会 統合管理システム
+
+      </a>
 
 
-<!-- ログイン -->
-<section id="auth">
+      <nav class="flex flex-wrap gap-2">
 
-  <div class="flex gap-2 mb-5">
+        <a href="index.html"
+           class="px-4 py-2 rounded-lg hover:bg-white/20">
 
-    <button onclick="showAuth('login')"
-            class="bg-indigo-600 text-white px-4 py-2 rounded-xl">
-      ログイン
-    </button>
+          🏠 メイン
 
-    <button onclick="showAuth('recover')"
-            class="bg-white px-4 py-2 rounded-xl">
-      IDをお忘れの方
-    </button>
+        </a>
 
-  </div>
+        <a href="group.html"
+           class="px-4 py-2 rounded-lg hover:bg-white/20">
 
+          🏢 団体
 
-  <div id="loginBox"
-       class="bg-white rounded-2xl shadow p-6">
+        </a>
 
-    <h2 class="text-xl font-bold mb-5">
-      個人ログイン
-    </h2>
+        <a href="user.html"
+           class="px-4 py-2 rounded-lg bg-white/20">
 
-    <input id="userId"
-           placeholder="ユーザーID（USR-XXXXXXXX）"
-           class="w-full border rounded-xl p-3 mb-3">
+          👤 個人
 
-    <input id="password"
-           type="password"
-           placeholder="パスワード"
-           class="w-full border rounded-xl p-3 mb-4">
+        </a>
 
-    <button onclick="login()"
-            class="bg-indigo-600 text-white px-6 py-3 rounded-xl">
-      ログイン
-    </button>
+        <a href="admin.html"
+           class="px-4 py-2 rounded-lg hover:bg-white/20">
 
-    <p id="loginMessage"
-       class="mt-3 text-red-600 text-sm"></p>
+          ⚙️ 管理者
 
-  </div>
+        </a>
 
-
-  <div id="recoverBox"
-       class="hidden bg-white rounded-2xl shadow p-6">
-
-    <h2 class="text-xl font-bold mb-5">
-      ユーザーID照会
-    </h2>
-
-    <input id="recoverUserEmail"
-           type="email"
-           placeholder="登録メールアドレス"
-           class="w-full border rounded-xl p-3 mb-4">
-
-    <button onclick="recoverUser()"
-            class="bg-indigo-600 text-white px-6 py-3 rounded-xl">
-      IDを照会
-    </button>
-
-    <div id="recoverUserResult"
-         class="mt-4"></div>
-
-  </div>
-
-</section>
-
-
-<!-- マイページ -->
-<section id="mypage"
-         class="hidden">
-
-  <div class="flex justify-between items-center mb-6">
-
-    <div>
-
-      <h2 id="userName"
-          class="text-2xl font-bold"></h2>
-
-      <p id="userInfo"
-         class="text-sm text-slate-500"></p>
+      </nav>
 
     </div>
 
-    <button onclick="logout()"
-            class="border bg-white px-4 py-2 rounded-xl">
-      ログアウト
-    </button>
-
   </div>
 
+</header>
 
-  <div class="bg-white rounded-2xl shadow p-6">
 
-    <div class="flex justify-between items-center mb-5">
+<main class="max-w-5xl mx-auto px-4 py-8">
 
-      <h3 class="text-xl font-bold">
-        個人向け申請フォーム
-      </h3>
 
-      <button onclick="loadForms()"
-              class="border px-4 py-2 rounded-xl">
-        更新
+  <!-- 認証 -->
+
+  <div id="authArea"
+       class="bg-white rounded-2xl shadow p-6">
+
+    <div class="flex flex-wrap gap-2 mb-6">
+
+      <button
+        onclick="showAuth('login')"
+        id="loginTab"
+        class="bg-indigo-600 text-white px-5 py-2 rounded-lg">
+
+        個人ログイン
+
+      </button>
+
+      <button
+        onclick="showAuth('recover')"
+        id="recoverTab"
+        class="bg-gray-200 px-5 py-2 rounded-lg">
+
+        ID回復
+
       </button>
 
     </div>
 
-    <div id="forms"
-         class="space-y-6"></div>
+
+    <!-- ログイン -->
+
+    <div id="loginBox">
+
+      <h1 class="text-2xl font-bold mb-5">
+        👤 個人ログイン
+      </h1>
+
+
+      <form
+        onsubmit="loginUser(event)"
+        class="space-y-4">
+
+        <input
+          id="userId"
+          required
+          placeholder="ユーザーID"
+          class="w-full border rounded-lg px-4 py-3">
+
+
+        <input
+          id="userPassword"
+          type="password"
+          required
+          placeholder="パスワード"
+          class="w-full border rounded-lg px-4 py-3">
+
+
+        <button
+          class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold">
+
+          ログイン
+
+        </button>
+
+      </form>
+
+    </div>
+
+
+    <!-- ID回復 -->
+
+    <div id="recoverBox"
+         class="hidden">
+
+      <h1 class="text-2xl font-bold mb-5">
+        🔎 ユーザーID回復
+      </h1>
+
+
+      <form
+        onsubmit="recoverUser(event)"
+        class="space-y-4">
+
+        <input
+          id="recoverUserName"
+          required
+          placeholder="氏名"
+          class="w-full border rounded-lg px-4 py-3">
+
+
+        <input
+          id="recoverUserEmail"
+          type="email"
+          required
+          placeholder="メールアドレス"
+          class="w-full border rounded-lg px-4 py-3">
+
+
+        <button
+          class="w-full bg-gray-700 text-white py-3 rounded-lg font-bold">
+
+          ユーザーIDを確認
+
+        </button>
+
+      </form>
+
+    </div>
 
   </div>
 
-</section>
 
-</main>
+  <!-- ダッシュボード -->
 
+  <div id="dashboard"
+       class="hidden">
 
-<script>
 
-const API_URL =
-  'https://script.google.com/macros/s/AKfycbx7gn6UibMj5JzjjfNcr3FcQpyAv2V0fX4FXNbv3pb9r1L5C5e7n1fTcAn5GNHg8PZu/exec';
+    <section class="bg-white rounded-2xl shadow p-6 mb-6">
 
-let token = '';
-let editingSubId = null;
-
-
-async function api(action, data = {}) {
-
-  const response = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'text/plain;charset=utf-8'
-    },
-    body: JSON.stringify({
-      action,
-      ...data
-    })
-  });
-
-  const result =
-    await response.json();
-
-  if (!result.success) {
-    throw new Error(result.error || 'APIエラー');
-  }
-
-  return result;
-}
-
-
-function showAuth(name) {
-
-  document
-    .getElementById('loginBox')
-    .classList.toggle(
-      'hidden',
-      name !== 'login'
-    );
-
-  document
-    .getElementById('recoverBox')
-    .classList.toggle(
-      'hidden',
-      name !== 'recover'
-    );
-
-}
-
-
-async function login() {
-
-  try {
-
-    const result =
-      await api(
-        'loginUser',
-        {
-          user_id:
-            document.getElementById('userId').value,
-
-          password:
-            document.getElementById('password').value
-        }
-      );
-
-    token = result.token;
-
-    document
-      .getElementById('auth')
-      .classList.add('hidden');
-
-    document
-      .getElementById('mypage')
-      .classList.remove('hidden');
-
-    document.getElementById('userName').textContent =
-      result.user_name;
-
-    document.getElementById('userInfo').textContent =
-      result.user_id +
-      ' ／ ' +
-      result.role;
-
-    await loadForms();
-
-  } catch (e) {
-
-    document
-      .getElementById('loginMessage')
-      .textContent = e.message;
-
-  }
-}
-
-
-async function recoverUser() {
-
-  try {
-
-    const result =
-      await api(
-        'recoverUserId',
-        {
-          email:
-            document.getElementById('recoverUserEmail').value
-        }
-      );
-
-    document.getElementById('recoverUserResult').innerHTML =
-
-      result.users.map(function(u) {
-
-        return `
-
-          <div class="bg-green-50 rounded-xl p-4 mb-2">
-
-            <div>
-              氏名：
-              <strong>${esc(u.user_name)}</strong>
-            </div>
-
-            <div>
-              ユーザーID：
-              <strong>${esc(u.user_id)}</strong>
-            </div>
-
-            <div class="text-sm">
-              団体ID：${esc(u.org_id)}
-            </div>
-
-          </div>
-
-        `;
-
-      }).join('');
-
-  } catch (e) {
-
-    document.getElementById('recoverUserResult').innerHTML =
-      `<p class="text-red-600">${esc(e.message)}</p>`;
-
-  }
-}
-
-
-async function loadForms() {
-
-  try {
-
-    const result =
-      await api(
-        'getFormsForTarget',
-        { token }
-      );
-
-    renderForms(result.forms);
-
-  } catch (e) {
-
-    alert(e.message);
-
-  }
-}
-
-
-function renderForms(forms) {
-
-  const container =
-    document.getElementById('forms');
-
-  if (!forms.length) {
-
-    container.innerHTML =
-      '<p class="text-slate-500">現在、申請フォームはありません。</p>';
-
-    return;
-  }
-
-
-  container.innerHTML =
-    forms.map(function(form) {
-
-      const sub =
-        form.submission;
-
-      const data =
-        sub ? sub.data || {} : {};
-
-      const locked =
-        form.deadline_passed &&
-        !(sub && sub.status === '差戻し');
-
-
-      return `
-
-      <div class="border rounded-2xl p-5">
-
-        <div class="flex justify-between items-start gap-3">
-
-          <div>
-
-            <h4 class="text-xl font-bold">
-              ${esc(form.title)}
-            </h4>
-
-            <p class="text-sm text-slate-500">
-              締切：${esc(form.deadline)}
-            </p>
-
-          </div>
-
-
-          ${
-            sub
-            ? `
-              <span class="px-3 py-1 rounded-full text-sm
-              ${
-                sub.status === '承認'
-                  ? 'bg-green-100 text-green-700'
-                  : sub.status === '差戻し'
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-yellow-100 text-yellow-700'
-              }">
-                ${esc(sub.status)}
-              </span>
-            `
-            : ''
-          }
-
-        </div>
-
-
-        ${
-          sub && sub.comment
-          ? `
-            <div class="mt-4 bg-red-50 text-red-700 p-4 rounded-xl">
-
-              <strong>差戻し理由</strong>
-
-              <div class="mt-1">
-                ${esc(sub.comment)}
-              </div>
-
-            </div>
-          `
-          : ''
-        }
-
-
-        ${
-          sub && sub.generated_pdf_url
-          ? `
-            <a href="${esc(sub.generated_pdf_url)}"
-               target="_blank"
-               class="inline-block mt-4 bg-indigo-600 text-white px-5 py-3 rounded-xl">
-              📄 申請書PDFをダウンロード（教員署名用）
-            </a>
-          `
-          : ''
-        }
-
-
-        ${
-          locked
-          ? `
-            <div class="bg-slate-100 rounded-xl p-4 mt-5">
-              締切を過ぎているため、提出できません。
-            </div>
-          `
-          : renderForm(form, data)
-        }
-
-      </div>
-
-      `;
-
-    }).join('');
-}
-
-
-function renderForm(form, data) {
-
-  return `
-
-    <form
-      class="mt-6"
-      onsubmit="submitForm(event,'${esc(form.form_id)}')">
-
-      <div class="space-y-4">
-
-        ${
-          form.fields.map(function(field) {
-
-            const value =
-              data[field.key] ?? '';
-
-            if (field.type === 'textarea') {
-
-              return `
-
-                <div>
-
-                  <label class="font-bold text-sm">
-                    ${esc(field.label)}
-                    ${field.required ? ' *' : ''}
-                  </label>
-
-                  <textarea
-                    name="${esc(field.key)}"
-                    rows="4"
-                    ${field.required ? 'required' : ''}
-                    class="w-full border rounded-xl p-3 mt-1">${esc(value)}</textarea>
-
-                </div>
-
-              `;
-
-            }
-
-
-            if (field.type === 'select') {
-
-              return `
-
-                <div>
-
-                  <label class="font-bold text-sm">
-                    ${esc(field.label)}
-                    ${field.required ? ' *' : ''}
-                  </label>
-
-                  <select
-                    name="${esc(field.key)}"
-                    ${field.required ? 'required' : ''}
-                    class="w-full border rounded-xl p-3 mt-1">
-
-                    <option value="">
-                      選択してください
-                    </option>
-
-                    ${(field.options || []).map(function(o) {
-
-                      return `
-                        <option
-                          value="${esc(o)}"
-                          ${String(value) === String(o) ? 'selected' : ''}>
-                          ${esc(o)}
-                        </option>
-                      `;
-
-                    }).join('')}
-
-                  </select>
-
-                </div>
-
-              `;
-
-            }
-
-
-            if (field.type === 'checkbox') {
-
-              return `
-
-                <label class="flex items-center gap-2">
-
-                  <input
-                    type="checkbox"
-                    name="${esc(field.key)}"
-                    ${value ? 'checked' : ''}
-                    class="w-5 h-5">
-
-                  ${esc(field.label)}
-
-                </label>
-
-              `;
-
-            }
-
-
-            return `
-
-              <div>
-
-                <label class="font-bold text-sm">
-                  ${esc(field.label)}
-                  ${field.required ? ' *' : ''}
-                </label>
-
-                <input
-                  type="${esc(field.type)}"
-                  name="${esc(field.key)}"
-                  value="${esc(value)}"
-                  ${field.required ? 'required' : ''}
-                  class="w-full border rounded-xl p-3 mt-1">
-
-              </div>
-
-            `;
-
-          }).join('')
-        }
-
+      <div class="flex flex-col md:flex-row md:justify-between gap-4">
 
         <div>
 
-          <label class="font-bold text-sm">
-            添付ファイル
-          </label>
+          <p class="text-gray-500">
+            ログイン中
+          </p>
 
-          <input
-            type="file"
-            class="file-input mt-1 w-full border rounded-xl p-3">
+          <h1 id="userNameDisplay"
+              class="text-3xl font-bold">
+          </h1>
 
-          <p class="text-xs text-slate-500">
-            最大10MB
+          <p id="userIdDisplay"
+             class="text-gray-500">
           </p>
 
         </div>
 
 
         <button
-          type="submit"
-          class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold">
+          onclick="logout()"
+          class="bg-red-500 text-white px-5 py-3 rounded-lg">
 
-          ${
-            editingSubId
-              ? '修正して再提出'
-              : '申請を提出'
-          }
+          ログアウト
 
         </button>
 
       </div>
 
-    </form>
+    </section>
 
-  `;
+
+    <section class="bg-white rounded-2xl shadow p-6 mb-6">
+
+      <h2 class="text-2xl font-bold mb-5">
+        📋 個人向け申請
+      </h2>
+
+      <div id="formsArea">
+      </div>
+
+    </section>
+
+
+    <section class="bg-white rounded-2xl shadow p-6">
+
+      <h2 class="text-2xl font-bold mb-5">
+        📂 提出履歴
+      </h2>
+
+      <div id="historyArea">
+      </div>
+
+    </section>
+
+
+  </div>
+
+</main>
+
+
+<footer class="bg-gray-900 text-gray-400 text-center py-6 mt-12">
+
+  学園祭実行委員会 統合管理システム
+
+</footer>
+
+
+<script>
+
+const API_URL =
+  'https://script.google.com/macros/s/AKfycbx7gn6UibMj5JzjjfNcr3FcQpyAv2V0fX4FXNbv3pb9r1L5C5e7n1fTcAn5GNHg8PZu/execL';
+
+
+let user = null;
+let forms = [];
+let submissions = [];
+
+
+/* =========================================
+   API
+========================================= */
+
+async function api(data) {
+
+  const response = await fetch(API_URL, {
+
+    method: 'POST',
+
+    body: JSON.stringify(data)
+
+  });
+
+  return await response.json();
 }
 
 
-async function submitForm(event, formId) {
+/* =========================================
+   認証切替
+========================================= */
+
+function showAuth(type) {
+
+  document
+    .getElementById('loginBox')
+    .classList.add('hidden');
+
+  document
+    .getElementById('recoverBox')
+    .classList.add('hidden');
+
+
+  document
+    .getElementById('loginTab')
+    .className =
+      'bg-gray-200 px-5 py-2 rounded-lg';
+
+  document
+    .getElementById('recoverTab')
+    .className =
+      'bg-gray-200 px-5 py-2 rounded-lg';
+
+
+  if (type === 'login') {
+
+    document
+      .getElementById('loginBox')
+      .classList.remove('hidden');
+
+    document
+      .getElementById('loginTab')
+      .className =
+        'bg-indigo-600 text-white px-5 py-2 rounded-lg';
+
+  } else {
+
+    document
+      .getElementById('recoverBox')
+      .classList.remove('hidden');
+
+    document
+      .getElementById('recoverTab')
+      .className =
+        'bg-indigo-600 text-white px-5 py-2 rounded-lg';
+
+  }
+
+}
+
+
+/* =========================================
+   ログイン
+========================================= */
+
+async function loginUser(event) {
 
   event.preventDefault();
 
-  const form =
-    event.target;
 
-  const data = {};
+  const result = await api({
 
-  form.querySelectorAll('[name]').forEach(function(el) {
+    action: 'loginUser',
 
-    data[el.name] =
-      el.type === 'checkbox'
-        ? el.checked
-        : el.value;
+    user_id:
+      document.getElementById('userId').value,
+
+    password:
+      document.getElementById('userPassword').value
 
   });
 
 
-  let file = null;
+  if (!result.success) {
 
-  const input =
-    form.querySelector('.file-input');
-
-  if (input && input.files.length) {
-
-    const f =
-      input.files[0];
-
-    if (f.size > 10 * 1024 * 1024) {
-      alert('ファイルは10MB以下にしてください。');
-      return;
-    }
-
-    file =
-      await readFile(f);
-  }
-
-
-  try {
-
-    await api(
-      'submitForm',
-      {
-        token,
-        form_id: formId,
-        sub_id: editingSubId || '',
-        data,
-        file
-      }
-    );
-
-    editingSubId = null;
-
-    alert('申請を提出しました。');
-
-    await loadForms();
-
-  } catch (e) {
-
-    alert(e.message);
+    alert(result.message);
+    return;
 
   }
+
+
+  user = result.user;
+
+
+  sessionStorage.setItem(
+    'festivalUser',
+    JSON.stringify(user)
+  );
+
+
+  showDashboard();
+
+  await loadForms();
+
+  await loadSubmissions();
+
 }
 
 
-function readFile(file) {
+/* =========================================
+   ID回復
+========================================= */
 
-  return new Promise(function(resolve, reject) {
+async function recoverUser(event) {
+
+  event.preventDefault();
+
+
+  const result = await api({
+
+    action: 'recoverUserId',
+
+    user_name:
+      document.getElementById('recoverUserName').value,
+
+    email:
+      document.getElementById('recoverUserEmail').value
+
+  });
+
+
+  if (!result.success) {
+
+    alert(result.message);
+    return;
+
+  }
+
+
+  const ids =
+    result.users
+      .map(user => user.user_id)
+      .join('\n');
+
+
+  alert(
+    '該当するユーザーID：\n\n' +
+    ids
+  );
+
+}
+
+
+/* =========================================
+   ダッシュボード
+========================================= */
+
+function showDashboard() {
+
+  document
+    .getElementById('authArea')
+    .classList.add('hidden');
+
+
+  document
+    .getElementById('dashboard')
+    .classList.remove('hidden');
+
+
+  document
+    .getElementById('userNameDisplay')
+    .textContent =
+      user.user_name;
+
+
+  document
+    .getElementById('userIdDisplay')
+    .textContent =
+      'ユーザーID：' +
+      user.user_id;
+
+}
+
+
+/* =========================================
+   フォーム取得
+========================================= */
+
+async function loadForms() {
+
+  const result = await api({
+
+    action: 'getFormsForTarget',
+
+    target_type: 'individual'
+
+  });
+
+
+  if (!result.success) {
+
+    alert(result.message);
+    return;
+
+  }
+
+
+  forms = result.forms;
+
+  renderForms();
+
+}
+
+
+/* =========================================
+   フォーム表示
+========================================= */
+
+function renderForms() {
+
+  const area =
+    document.getElementById('formsArea');
+
+  area.innerHTML = '';
+
+
+  if (forms.length === 0) {
+
+    area.innerHTML = `
+      <p class="text-gray-500">
+        現在、個人向け申請はありません。
+      </p>
+    `;
+
+    return;
+
+  }
+
+
+  forms.forEach(form => {
+
+    const card =
+      document.createElement('div');
+
+    card.className =
+      'border rounded-xl p-6 mb-6';
+
+
+    let fieldsHtml = '';
+
+
+    form.fields.forEach((field, index) => {
+
+      const fieldName =
+        field.name ||
+        'field_' + index;
+
+      const label =
+        field.label ||
+        fieldName;
+
+      const type =
+        field.type ||
+        'text';
+
+
+      if (type === 'textarea') {
+
+        fieldsHtml += `
+
+          <div class="mb-4">
+
+            <label class="block font-bold mb-2">
+
+              ${escapeHtml(label)}
+
+            </label>
+
+            <textarea
+
+              data-form="${form.form_id}"
+
+              data-field="${escapeHtml(fieldName)}"
+
+              rows="4"
+
+              class="form-field w-full border rounded-lg px-4 py-3"
+
+            ></textarea>
+
+          </div>
+
+        `;
+
+      } else {
+
+        fieldsHtml += `
+
+          <div class="mb-4">
+
+            <label class="block font-bold mb-2">
+
+              ${escapeHtml(label)}
+
+            </label>
+
+            <input
+
+              type="${escapeHtml(type)}"
+
+              data-form="${form.form_id}"
+
+              data-field="${escapeHtml(fieldName)}"
+
+              class="form-field w-full border rounded-lg px-4 py-3"
+
+            >
+
+          </div>
+
+        `;
+
+      }
+
+    });
+
+
+    card.innerHTML = `
+
+      <h3 class="text-xl font-bold mb-2">
+
+        ${escapeHtml(form.title)}
+
+      </h3>
+
+
+      <p class="text-red-600 mb-5">
+
+        締切：${escapeHtml(form.deadline)}
+
+      </p>
+
+
+      ${fieldsHtml}
+
+
+      <div class="mb-4">
+
+        <label class="block font-bold mb-2">
+
+          添付ファイル
+
+        </label>
+
+
+        <input
+
+          type="file"
+
+          id="file_${form.form_id}"
+
+          class="w-full border rounded-lg px-4 py-3">
+
+      </div>
+
+
+      <button
+
+        onclick="submitApplication('${form.form_id}')"
+
+        class="w-full bg-green-600 text-white py-3 rounded-lg font-bold">
+
+        申請を提出する
+
+      </button>
+
+    `;
+
+
+    area.appendChild(card);
+
+  });
+
+}
+
+
+/* =========================================
+   申請
+========================================= */
+
+async function submitApplication(formId) {
+
+  const data = {};
+
+
+  document
+    .querySelectorAll(
+      `.form-field[data-form="${formId}"]`
+    )
+    .forEach(input => {
+
+      data[input.dataset.field] =
+        input.value;
+
+    });
+
+
+  const fileInput =
+    document.getElementById(
+      'file_' + formId
+    );
+
+
+  let file = null;
+
+
+  if (
+    fileInput &&
+    fileInput.files.length
+  ) {
+
+    const selected =
+      fileInput.files[0];
+
+
+    if (
+      selected.size >
+      10 * 1024 * 1024
+    ) {
+
+      alert(
+        'ファイルは10MB以下にしてください。'
+      );
+
+      return;
+
+    }
+
+
+    file =
+      await fileToBase64(selected);
+
+  }
+
+
+  const result = await api({
+
+    action: 'submitForm',
+
+    form_id: formId,
+
+    target_id:
+      user.user_id,
+
+    submitter_name:
+      user.user_name,
+
+    data: data,
+
+    file: file
+
+  });
+
+
+  if (!result.success) {
+
+    alert(result.message);
+    return;
+
+  }
+
+
+  alert(result.message);
+
+  await loadSubmissions();
+
+}
+
+
+/* =========================================
+   履歴
+========================================= */
+
+async function loadSubmissions() {
+
+  const result = await api({
+
+    action: 'getSubmissionsForTarget',
+
+    target_id:
+      user.user_id
+
+  });
+
+
+  if (!result.success) return;
+
+
+  submissions =
+    result.submissions;
+
+
+  renderHistory();
+
+}
+
+
+function renderHistory() {
+
+  const area =
+    document.getElementById('historyArea');
+
+  area.innerHTML = '';
+
+
+  if (!submissions.length) {
+
+    area.innerHTML = `
+      <p class="text-gray-500">
+        提出履歴はありません。
+      </p>
+    `;
+
+    return;
+
+  }
+
+
+  submissions
+    .slice()
+    .reverse()
+    .forEach(sub => {
+
+      const form =
+        forms.find(
+          f => f.form_id === sub.form_id
+        );
+
+
+      const title =
+        form
+          ? form.title
+          : sub.form_id;
+
+
+      const card =
+        document.createElement('div');
+
+      card.className =
+        'border rounded-xl p-5 mb-4';
+
+
+      card.innerHTML = `
+
+        <div class="flex justify-between gap-4">
+
+          <div>
+
+            <h3 class="font-bold text-lg">
+
+              ${escapeHtml(title)}
+
+            </h3>
+
+            <p class="text-sm text-gray-500">
+
+              ${escapeHtml(String(sub.submitted_at))}
+
+            </p>
+
+          </div>
+
+
+          <span class="px-3 py-1 rounded-full bg-gray-100">
+
+            ${escapeHtml(sub.status)}
+
+          </span>
+
+        </div>
+
+
+        ${
+          sub.comment
+          ? `
+
+            <div class="mt-4 bg-red-50 p-4 rounded-lg">
+
+              <strong class="text-red-700">
+
+                差戻し理由
+
+              </strong>
+
+              <p class="mt-1">
+
+                ${escapeHtml(sub.comment)}
+
+              </p>
+
+            </div>
+
+          `
+          : ''
+        }
+
+
+        <div class="flex flex-wrap gap-2 mt-4">
+
+          ${
+            sub.generated_pdf_url
+            ? `
+
+              <a
+
+                href="${escapeHtml(sub.generated_pdf_url)}"
+
+                target="_blank"
+
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg">
+
+                📄 申請書PDFをダウンロード（教員署名用）
+
+              </a>
+
+            `
+            : ''
+          }
+
+
+          ${
+            sub.file_url
+            ? `
+
+              <a
+
+                href="${escapeHtml(sub.file_url)}"
+
+                target="_blank"
+
+                class="bg-gray-700 text-white px-4 py-2 rounded-lg">
+
+                📎 添付ファイル
+
+              </a>
+
+            `
+            : ''
+          }
+
+        </div>
+
+      `;
+
+
+      area.appendChild(card);
+
+    });
+
+}
+
+
+/* =========================================
+   Base64
+========================================= */
+
+function fileToBase64(file) {
+
+  return new Promise((resolve, reject) => {
 
     const reader =
       new FileReader();
 
-    reader.onload = function() {
+
+    reader.onload = () => {
 
       resolve({
-        name: file.name,
-        mimeType: file.type,
+
+        name:
+          file.name,
+
+        mimeType:
+          file.type,
+
+        size:
+          file.size,
+
         base64:
           reader.result.split(',')[1]
+
       });
 
     };
 
-    reader.onerror = reject;
+
+    reader.onerror =
+      reject;
+
 
     reader.readAsDataURL(file);
 
@@ -689,22 +985,26 @@ function readFile(file) {
 }
 
 
+/* =========================================
+   ログアウト
+========================================= */
+
 function logout() {
 
-  token = '';
+  sessionStorage.removeItem(
+    'festivalUser'
+  );
 
-  document
-    .getElementById('mypage')
-    .classList.add('hidden');
-
-  document
-    .getElementById('auth')
-    .classList.remove('hidden');
+  location.reload();
 
 }
 
 
-function esc(value) {
+/* =========================================
+   Escape
+========================================= */
+
+function escapeHtml(value) {
 
   return String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -714,6 +1014,46 @@ function esc(value) {
     .replace(/'/g, '&#039;');
 
 }
+
+
+/* =========================================
+   起動
+========================================= */
+
+window.addEventListener(
+  'DOMContentLoaded',
+  async () => {
+
+    const saved =
+      sessionStorage.getItem(
+        'festivalUser'
+      );
+
+
+    if (!saved) return;
+
+
+    try {
+
+      user =
+        JSON.parse(saved);
+
+      showDashboard();
+
+      await loadForms();
+
+      await loadSubmissions();
+
+    } catch (e) {
+
+      sessionStorage.removeItem(
+        'festivalUser'
+      );
+
+    }
+
+  }
+);
 
 </script>
 
