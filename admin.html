@@ -1,1520 +1,443 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0">
-
-  <title>
-    管理者ページ - 学園祭実行委員会 統合管理システム
-  </title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理者ページ - 学園祭実行委員会 統合管理システム</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
 </head>
-
-
 <body class="bg-gray-100 min-h-screen">
-
-
-<header class="bg-gray-900 text-white shadow-lg">
-
-  <div class="max-w-7xl mx-auto px-4 py-4">
-
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
-      <a href="index.html"
-         class="text-xl font-bold">
-
-        学園祭実行委員会 統合管理システム
-
-      </a>
-
-
-      <nav class="flex flex-wrap gap-2">
-
-        <a
-          href="index.html"
-          class="px-4 py-2 rounded-lg hover:bg-white/20">
-
-          🏠 メイン
-
-        </a>
-
-
-        <a
-          href="group.html"
-          class="px-4 py-2 rounded-lg hover:bg-white/20">
-
-          🏢 団体
-
-        </a>
-
-
-        <a
-          href="user.html"
-          class="px-4 py-2 rounded-lg hover:bg-white/20">
-
-          👤 個人
-
-        </a>
-
-
-        <a
-          href="admin.html"
-          class="px-4 py-2 rounded-lg bg-white/20">
-
-          ⚙️ 管理者
-
-        </a>
-
-      </nav>
-
-    </div>
-
-  </div>
-
-</header>
-
-
-<main class="max-w-7xl mx-auto px-4 py-8">
-
-
-  <!-- ログイン -->
-
-  <div
-    id="loginArea"
-    class="max-w-md mx-auto">
-
-    <div class="bg-white rounded-2xl shadow p-8">
-
-      <div class="text-center mb-6">
-
-        <div class="text-5xl mb-4">
-          ⚙️
-        </div>
-
-        <h1 class="text-2xl font-bold">
-          管理者ログイン
-        </h1>
-
-        <p class="text-gray-500 mt-2">
-          管理者パスワードを入力してください。
-        </p>
-
+  <header class="bg-gray-900 text-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <a href="index.html" class="text-xl font-bold">学園祭実行委員会 統合管理システム</a>
+        <nav class="flex flex-wrap gap-2">
+          <a href="index.html" class="px-4 py-2 rounded-lg hover:bg-white/20">メイン</a>
+          <a href="group.html" class="px-4 py-2 rounded-lg hover:bg-white/20">団体</a>
+          <a href="user.html" class="px-4 py-2 rounded-lg hover:bg-white/20">個人</a>
+          <a href="admin.html" class="px-4 py-2 rounded-lg bg-white/20">管理者</a>
+        </nav>
       </div>
-
-
-      <form
-        onsubmit="adminLogin(event)"
-        class="space-y-4">
-
-        <input
-          id="adminPassword"
-          type="password"
-          required
-          placeholder="管理者パスワード"
-          class="w-full border rounded-lg px-4 py-3">
-
-
-        <button
-          class="w-full bg-gray-900 text-white py-3 rounded-lg font-bold">
-
-          管理者としてログイン
-
-        </button>
-
-      </form>
-
-
-      <div class="text-center mt-5">
-
-        <a
-          href="index.html"
-          class="text-indigo-600 hover:underline">
-
-          ← メインページへ戻る
-
-        </a>
-
-      </div>
-
     </div>
+  </header>
 
-  </div>
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <div id="msgBox" class="hidden mb-6 p-4 rounded-xl border font-semibold"></div>
 
-
-  <!-- 管理画面 -->
-
-  <div
-    id="adminArea"
-    class="hidden">
-
-
-    <div class="bg-white rounded-2xl shadow p-6 mb-6">
-
-      <div class="flex flex-col md:flex-row md:justify-between gap-4">
-
-        <div>
-
-          <p class="text-gray-500">
-            管理者としてログイン中
-          </p>
-
-          <h1 class="text-3xl font-bold">
-            管理者ダッシュボード
-          </h1>
-
+    <!-- ログイン -->
+    <div id="loginArea" class="max-w-md mx-auto">
+      <div class="bg-white rounded-2xl shadow p-8">
+        <div class="text-center mb-6">
+          <h1 class="text-2xl font-bold">管理者ログイン</h1>
+          <p class="text-gray-500 mt-2">管理者パスワードを入力してください。</p>
         </div>
-
-
-        <button
-          onclick="logout()"
-          class="bg-red-500 text-white px-5 py-3 rounded-lg">
-
-          ログアウト
-
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <!-- タブ -->
-
-    <div class="flex flex-wrap gap-2 mb-6">
-
-      <button
-        onclick="showTab('forms')"
-        id="formsTab"
-        class="bg-gray-900 text-white px-5 py-3 rounded-lg">
-
-        📝 フォーム作成
-
-      </button>
-
-
-      <button
-        onclick="showTab('directory')"
-        id="directoryTab"
-        class="bg-gray-200 px-5 py-3 rounded-lg">
-
-        👥 団体・ユーザー一覧
-
-      </button>
-
-
-      <button
-        onclick="showTab('submissions')"
-        id="submissionsTab"
-        class="bg-gray-200 px-5 py-3 rounded-lg">
-
-        📋 申請審査
-
-      </button>
-
-    </div>
-
-
-    <!-- フォーム作成 -->
-
-    <section
-      id="formsSection"
-      class="bg-white rounded-2xl shadow p-6">
-
-      <h2 class="text-2xl font-bold mb-6">
-        📝 フォーム作成
-      </h2>
-
-
-      <form
-        onsubmit="createForm(event)"
-        class="space-y-5">
-
-
-        <input
-          id="formTitle"
-          required
-          placeholder="フォームタイトル"
-          class="w-full border rounded-lg px-4 py-3">
-
-
-        <select
-          id="formTarget"
-          class="w-full border rounded-lg px-4 py-3">
-
-          <option value="organization">
-            団体向け
-          </option>
-
-          <option value="individual">
-            個人向け
-          </option>
-
-        </select>
-
-
-        <div>
-
-          <label class="font-bold block mb-2">
-            提出期限
-          </label>
-
-          <input
-            id="formDeadline"
-            type="datetime-local"
-            required
-            class="w-full border rounded-lg px-4 py-3">
-
+        <form onsubmit="adminLogin(event)" class="space-y-4">
+          <input id="adminPassword" type="password" required placeholder="管理者パスワード" class="w-full border rounded-lg px-4 py-3">
+          <button class="w-full bg-gray-900 text-white py-3 rounded-lg font-bold hover:bg-black">管理者としてログイン</button>
+        </form>
+        <div class="text-center mt-5">
+          <a href="index.html" class="text-indigo-600 hover:underline">← メインページへ戻る</a>
         </div>
+      </div>
+    </div>
 
-
-        <input
-          id="templateDocId"
-          placeholder="Google DocsテンプレートID（任意）"
-          class="w-full border rounded-lg px-4 py-3">
-
-
-        <div>
-
-          <div class="flex justify-between items-center mb-3">
-
-            <h3 class="font-bold text-lg">
-              入力項目
-            </h3>
-
-            <button
-              type="button"
-              onclick="addField()"
-              class="bg-indigo-600 text-white px-4 py-2 rounded-lg">
-
-              ＋ 項目追加
-
-            </button>
-
+    <!-- 管理画面 -->
+    <div id="adminArea" class="hidden">
+      <div class="bg-white rounded-2xl shadow p-6 mb-6">
+        <div class="flex flex-col md:flex-row md:justify-between gap-4">
+          <div>
+            <p class="text-gray-500">管理者としてログイン中</p>
+            <h1 class="text-3xl font-bold">管理者ダッシュボード</h1>
           </div>
+          <button onclick="logout()" class="bg-red-500 text-white px-5 py-3 rounded-lg font-bold hover:bg-red-600">ログアウト</button>
+        </div>
+      </div>
 
+      <!-- タブ -->
+      <div class="flex flex-wrap gap-2 mb-6">
+        <button onclick="showTab('forms')" id="formsTab" class="bg-gray-900 text-white px-5 py-3 rounded-lg font-bold">📝 フォーム作成</button>
+        <button onclick="showTab('directory')" id="directoryTab" class="bg-gray-200 px-5 py-3 rounded-lg font-bold">👥 団体・ユーザー一覧</button>
+        <button onclick="showTab('submissions')" id="submissionsTab" class="bg-gray-200 px-5 py-3 rounded-lg font-bold">📋 申請審査</button>
+      </div>
 
-          <div id="fieldsArea">
+      <!-- フォーム作成 -->
+      <section id="formsSection" class="bg-white rounded-2xl shadow p-6">
+        <h2 class="text-2xl font-bold mb-6">フォーム作成</h2>
+        <form onsubmit="createForm(event)" class="space-y-5">
+          <input id="formTitle" required placeholder="フォームタイトル" class="w-full border rounded-lg px-4 py-3">
+          <select id="formTarget" class="w-full border rounded-lg px-4 py-3 bg-white">
+            <option value="organization">団体向け</option>
+            <option value="individual">個人向け</option>
+          </select>
+          <div>
+            <label class="font-bold block mb-2">提出期限</label>
+            <input id="formDeadline" type="datetime-local" required class="w-full border rounded-lg px-4 py-3">
           </div>
-
-        </div>
-
-
-        <button
-          class="w-full bg-gray-900 text-white py-3 rounded-lg font-bold">
-
-          フォームを作成する
-
-        </button>
-
-      </form>
-
-
-      <div
-        id="formResult"
-        class="mt-6">
-      </div>
-
-
-      <hr class="my-8">
-
-
-      <h3 class="text-xl font-bold mb-4">
-        作成済みフォーム
-      </h3>
-
-
-      <div id="formsList">
-      </div>
-
-    </section>
-
-
-    <!-- 団体一覧 -->
-
-    <section
-      id="directorySection"
-      class="hidden bg-white rounded-2xl shadow p-6">
-
-      <h2 class="text-2xl font-bold mb-6">
-        👥 団体・ユーザー一覧
-      </h2>
-
-
-      <h3 class="text-xl font-bold mb-4">
-        団体一覧
-      </h3>
-
-
-      <div class="overflow-x-auto mb-10">
-
-        <table class="w-full">
-
-          <thead>
-
-            <tr class="border-b">
-
-              <th class="p-3 text-left">
-                団体ID
-              </th>
-
-              <th class="p-3 text-left">
-                団体名
-              </th>
-
-              <th class="p-3 text-left">
-                カテゴリ
-              </th>
-
-              <th class="p-3 text-left">
-                代表者
-              </th>
-
-              <th class="p-3 text-left">
-                メール
-              </th>
-
-            </tr>
-
-          </thead>
-
-          <tbody id="organizationsTable">
-          </tbody>
-
-        </table>
-
-      </div>
-
-
-      <h3 class="text-xl font-bold mb-4">
-        ユーザー一覧
-      </h3>
-
-
-      <div class="overflow-x-auto">
-
-        <table class="w-full">
-
-          <thead>
-
-            <tr class="border-b">
-
-              <th class="p-3 text-left">
-                ユーザーID
-              </th>
-
-              <th class="p-3 text-left">
-                団体ID
-              </th>
-
-              <th class="p-3 text-left">
-                氏名
-              </th>
-
-              <th class="p-3 text-left">
-                メール
-              </th>
-
-              <th class="p-3 text-left">
-                役割
-              </th>
-
-            </tr>
-
-          </thead>
-
-          <tbody id="usersTable">
-          </tbody>
-
-        </table>
-
-      </div>
-
-    </section>
-
-
-    <!-- 申請審査 -->
-
-    <section
-      id="submissionsSection"
-      class="hidden bg-white rounded-2xl shadow p-6">
-
-      <h2 class="text-2xl font-bold mb-6">
-        📋 申請審査
-      </h2>
-
-
-      <div id="submissionsArea">
-      </div>
-
-    </section>
-
-
-  </div>
-
-</main>
-
-
-<footer class="bg-gray-900 text-gray-400 text-center py-6 mt-12">
-
-  学園祭実行委員会 統合管理システム
-
-</footer>
-
-
-<script>
-
-const API_URL =
-  'https://script.google.com/macros/s/AKfycbx7gn6UibMj5JzjjfNcr3FcQpyAv2V0fX4FXNbv3pb9r1L5C5e7n1fTcAn5GNHg8PZu/exec';
-
-
-let adminPassword = '';
-
-let fields = [];
-
-let forms = [];
-
-let submissions = [];
-
-let organizations = [];
-
-let users = [];
-
-
-/* =========================================
-   API
-========================================= */
-
-async function api(data) {
-
-  const response = await fetch(API_URL, {
-
-    method: 'POST',
-
-    body: JSON.stringify(data)
-
-  });
-
-  return await response.json();
-
-}
-
-
-/* =========================================
-   管理者ログイン
-========================================= */
-
-async function adminLogin(event) {
-
-  event.preventDefault();
-
-
-  const password =
-    document.getElementById(
-      'adminPassword'
-    ).value;
-
-
-  const result =
-    await api({
-
-      action: 'loginAdmin',
-
-      password: password
-
-    });
-
-
-  if (!result.success) {
-
-    alert(result.message);
-
-    return;
-
-  }
-
-
-  adminPassword =
-    password;
-
-
-  sessionStorage.setItem(
-    'festivalAdmin',
-    'true'
-  );
-
-
-  document
-    .getElementById('loginArea')
-    .classList.add('hidden');
-
-
-  document
-    .getElementById('adminArea')
-    .classList.remove('hidden');
-
-
-  await loadAdminData();
-
-}
-
-
-/* =========================================
-   タブ
-========================================= */
-
-function showTab(tab) {
-
-  document
-    .getElementById('formsSection')
-    .classList.add('hidden');
-
-  document
-    .getElementById('directorySection')
-    .classList.add('hidden');
-
-  document
-    .getElementById('submissionsSection')
-    .classList.add('hidden');
-
-
-  document
-    .getElementById('formsTab')
-    .className =
-      'bg-gray-200 px-5 py-3 rounded-lg';
-
-  document
-    .getElementById('directoryTab')
-    .className =
-      'bg-gray-200 px-5 py-3 rounded-lg';
-
-  document
-    .getElementById('submissionsTab')
-    .className =
-      'bg-gray-200 px-5 py-3 rounded-lg';
-
-
-  if (tab === 'forms') {
-
-    document
-      .getElementById('formsSection')
-      .classList.remove('hidden');
-
-    document
-      .getElementById('formsTab')
-      .className =
-        'bg-gray-900 text-white px-5 py-3 rounded-lg';
-
-  }
-
-
-  if (tab === 'directory') {
-
-    document
-      .getElementById('directorySection')
-      .classList.remove('hidden');
-
-    document
-      .getElementById('directoryTab')
-      .className =
-        'bg-gray-900 text-white px-5 py-3 rounded-lg';
-
-  }
-
-
-  if (tab === 'submissions') {
-
-    document
-      .getElementById('submissionsSection')
-      .classList.remove('hidden');
-
-    document
-      .getElementById('submissionsTab')
-      .className =
-        'bg-gray-900 text-white px-5 py-3 rounded-lg';
-
-  }
-
-}
-
-
-/* =========================================
-   入力項目追加
-========================================= */
-
-function addField() {
-
-  const index =
-    fields.length;
-
-
-  fields.push({
-
-    name:
-      'field_' + (index + 1),
-
-    label:
-      '',
-
-    type:
-      'text'
-
-  });
-
-
-  renderFields();
-
-}
-
-
-function removeField(index) {
-
-  fields.splice(index, 1);
-
-  renderFields();
-
-}
-
-
-function renderFields() {
-
-  const area =
-    document.getElementById(
-      'fieldsArea'
-    );
-
-
-  area.innerHTML = '';
-
-
-  fields.forEach((field, index) => {
-
-    const div =
-      document.createElement('div');
-
-    div.className =
-      'border rounded-lg p-4 mb-3 bg-gray-50';
-
-
-    div.innerHTML = `
-
-      <div class="grid md:grid-cols-3 gap-3">
-
-        <input
-
-          value="${escapeHtml(field.name)}"
-
-          onchange="fields[${index}].name=this.value"
-
-          placeholder="内部名"
-
-          class="border rounded-lg px-3 py-2">
-
-
-        <input
-
-          value="${escapeHtml(field.label)}"
-
-          onchange="fields[${index}].label=this.value"
-
-          placeholder="表示ラベル"
-
-          class="border rounded-lg px-3 py-2">
-
-
-        <select
-
-          onchange="fields[${index}].type=this.value"
-
-          class="border rounded-lg px-3 py-2">
-
-          <option value="text"
-            ${field.type === 'text' ? 'selected' : ''}>
-
-            文字
-
-          </option>
-
-          <option value="textarea"
-            ${field.type === 'textarea' ? 'selected' : ''}>
-
-            長文
-
-          </option>
-
-          <option value="date"
-            ${field.type === 'date' ? 'selected' : ''}>
-
-            日付
-
-          </option>
-
-          <option value="time"
-            ${field.type === 'time' ? 'selected' : ''}>
-
-            時刻
-
-          </option>
-
-          <option value="email"
-            ${field.type === 'email' ? 'selected' : ''}>
-
-            メール
-
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <button
-
-        type="button"
-
-        onclick="removeField(${index})"
-
-        class="mt-3 text-red-600">
-
-        ✕ この項目を削除
-
-      </button>
-
-    `;
-
-
-    area.appendChild(div);
-
-  });
-
-}
-
-
-/* =========================================
-   フォーム作成
-========================================= */
-
-async function createForm(event) {
-
-  event.preventDefault();
-
-
-  const result =
-    await api({
-
-      action:
-        'createFormTemplate',
-
-      title:
-        document.getElementById(
-          'formTitle'
-        ).value,
-
-      target_type:
-        document.getElementById(
-          'formTarget'
-        ).value,
-
-      deadline:
-        document.getElementById(
-          'formDeadline'
-        ).value,
-
-      fields:
-        fields,
-
-      template_doc_id:
-        document.getElementById(
-          'templateDocId'
-        ).value,
-
-      admin_password:
-        adminPassword
-
-    });
-
-
-  if (!result.success) {
-
-    alert(result.message);
-
-    return;
-
-  }
-
-
-  document
-    .getElementById('formResult')
-    .innerHTML = `
-
-      <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-
-        フォームを作成しました。<br>
-
-        フォームID：
-        <strong>
-          ${escapeHtml(result.form_id)}
-        </strong>
-
-      </div>
-
-    `;
-
-
-  document
-    .getElementById('formTitle')
-    .value = '';
-
-
-  document
-    .getElementById('templateDocId')
-    .value = '';
-
-
-  fields = [];
-
-  renderFields();
-
-  await loadForms();
-
-}
-
-
-/* =========================================
-   管理データ
-========================================= */
-
-async function loadAdminData() {
-
-  const result =
-    await api({
-
-      action:
-        'getFormsAndSubmissions',
-
-      admin_password:
-        adminPassword
-
-    });
-
-
-  if (result.success) {
-
-    forms =
-      result.forms;
-
-    submissions =
-      result.submissions;
-
-    renderFormsList();
-
-    renderSubmissions();
-
-  }
-
-
-  const directory =
-    await api({
-
-      action:
-        'getAllDirectory',
-
-      admin_password:
-        adminPassword
-
-    });
-
-
-  if (directory.success) {
-
-    organizations =
-      directory.organizations;
-
-    users =
-      directory.users;
-
-    renderDirectory();
-
-  }
-
-}
-
-
-/* =========================================
-   フォーム一覧
-========================================= */
-
-async function loadForms() {
-
-  await loadAdminData();
-
-}
-
-
-function renderFormsList() {
-
-  const area =
-    document.getElementById(
-      'formsList'
-    );
-
-
-  area.innerHTML = '';
-
-
-  if (!forms.length) {
-
-    area.innerHTML = `
-      <p class="text-gray-500">
-        フォームはありません。
-      </p>
-    `;
-
-    return;
-
-  }
-
-
-  forms.forEach(form => {
-
-    const div =
-      document.createElement('div');
-
-    div.className =
-      'border rounded-lg p-4 mb-3';
-
-
-    div.innerHTML = `
-
-      <div class="flex justify-between">
-
-        <div>
-
-          <h3 class="font-bold">
-            ${escapeHtml(form.title)}
-          </h3>
-
-          <p class="text-sm text-gray-500">
-
-            ID：
-            ${escapeHtml(form.form_id)}
-
-          </p>
-
-          <p class="text-sm">
-
-            対象：
-            ${form.target_type === 'organization'
-              ? '団体'
-              : '個人'}
-
-          </p>
-
-          <p class="text-sm text-red-600">
-
-            締切：
-            ${escapeHtml(form.deadline)}
-
-          </p>
-
-        </div>
-
-      </div>
-
-    `;
-
-
-    area.appendChild(div);
-
-  });
-
-}
-
-
-/* =========================================
-   団体一覧
-========================================= */
-
-function renderDirectory() {
-
-  const orgTable =
-    document.getElementById(
-      'organizationsTable'
-    );
-
-  orgTable.innerHTML = '';
-
-
-  organizations.forEach(org => {
-
-    const tr =
-      document.createElement('tr');
-
-    tr.className =
-      'border-b';
-
-
-    tr.innerHTML = `
-
-      <td class="p-3 font-mono">
-        ${escapeHtml(org.org_id)}
-      </td>
-
-      <td class="p-3">
-        ${escapeHtml(org.org_name)}
-      </td>
-
-      <td class="p-3">
-        ${escapeHtml(org.category)}
-      </td>
-
-      <td class="p-3">
-        ${escapeHtml(org.rep_name)}
-      </td>
-
-      <td class="p-3">
-        ${escapeHtml(org.rep_email)}
-      </td>
-
-    `;
-
-
-    orgTable.appendChild(tr);
-
-  });
-
-
-  const userTable =
-    document.getElementById(
-      'usersTable'
-    );
-
-  userTable.innerHTML = '';
-
-
-  users.forEach(user => {
-
-    const tr =
-      document.createElement('tr');
-
-    tr.className =
-      'border-b';
-
-
-    tr.innerHTML = `
-
-      <td class="p-3 font-mono">
-        ${escapeHtml(user.user_id)}
-      </td>
-
-      <td class="p-3 font-mono">
-        ${escapeHtml(user.org_id)}
-      </td>
-
-      <td class="p-3">
-        ${escapeHtml(user.user_name)}
-      </td>
-
-      <td class="p-3">
-        ${escapeHtml(user.email)}
-      </td>
-
-      <td class="p-3">
-        ${escapeHtml(user.role)}
-      </td>
-
-    `;
-
-
-    userTable.appendChild(tr);
-
-  });
-
-}
-
-
-/* =========================================
-   申請一覧
-========================================= */
-
-function renderSubmissions() {
-
-  const area =
-    document.getElementById(
-      'submissionsArea'
-    );
-
-
-  area.innerHTML = '';
-
-
-  if (!submissions.length) {
-
-    area.innerHTML = `
-      <p class="text-gray-500">
-        現在、申請はありません。
-      </p>
-    `;
-
-    return;
-
-  }
-
-
-  submissions
-    .slice()
-    .reverse()
-    .forEach(sub => {
-
-      const form =
-        forms.find(
-          f => f.form_id === sub.form_id
-        );
-
-
-      const title =
-        form
-          ? form.title
-          : sub.form_id;
-
-
-      const card =
-        document.createElement('div');
-
-      card.className =
-        'border rounded-xl p-5 mb-5';
-
-
-      let dataHtml = '';
-
-
-      Object.entries(sub.data || {})
-        .forEach(([key, value]) => {
-
-          dataHtml += `
-
-            <div class="bg-gray-50 p-3 rounded-lg">
-
-              <p class="text-sm text-gray-500">
-
-                ${escapeHtml(key)}
-
-              </p>
-
-              <p class="font-medium">
-
-                ${escapeHtml(value)}
-
-              </p>
-
+          <input id="templateDocId" placeholder="Google DocsテンプレートID (任意)" class="w-full border rounded-lg px-4 py-3">
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="font-bold text-lg">入力項目</h3>
+              <button type="button" onclick="addField()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-indigo-700">+ 項目追加</button>
             </div>
+            <div id="fieldsArea"></div>
+          </div>
+          <button class="w-full bg-gray-900 text-white py-3 rounded-lg font-bold hover:bg-black">フォームを作成する</button>
+        </form>
 
+        <hr class="my-8">
+        <h3 class="text-xl font-bold mb-4">作成済みフォーム</h3>
+        <div id="formsList"></div>
+      </section>
+
+      <!-- 団体・ユーザー一覧 -->
+      <section id="directorySection" class="hidden bg-white rounded-2xl shadow p-6">
+        <h2 class="text-2xl font-bold mb-6">👥 団体・ユーザー一覧</h2>
+        <h3 class="text-xl font-bold mb-4">団体一覧</h3>
+        <div class="overflow-x-auto mb-10">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b text-left text-gray-600">
+                <th class="p-3">団体ID</th>
+                <th class="p-3">団体名</th>
+                <th class="p-3">カテゴリ</th>
+                <th class="p-3">代表者</th>
+                <th class="p-3">メール</th>
+                <th class="p-3">招待コード</th>
+              </tr>
+            </thead>
+            <tbody id="organizationsTable"></tbody>
+          </table>
+        </div>
+
+        <h3 class="text-xl font-bold mb-4">ユーザー一覧</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b text-left text-gray-600">
+                <th class="p-3">学生番号(ID)</th>
+                <th class="p-3">所属団体ID</th>
+                <th class="p-3">氏名</th>
+                <th class="p-3">メール</th>
+                <th class="p-3">役割</th>
+              </tr>
+            </thead>
+            <tbody id="usersTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 申請審査 -->
+      <section id="submissionsSection" class="hidden bg-white rounded-2xl shadow p-6">
+        <h2 class="text-2xl font-bold mb-6">申請審査</h2>
+        <div id="submissionsArea"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="bg-gray-900 text-gray-400 text-center py-6 mt-12">学園祭実行委員会 統合管理システム</footer>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbx7gn6UibMj5JzjjfNcr3FcQpyAv2V0fX4FXNbv3pb9r1L5C5e7n1fTcAn5GNHg8PZu/exec';
+    let adminPassword = '';
+    let fields = [];
+    let forms = [];
+    let submissions = [];
+    let organizations = [];
+    let users = [];
+
+    function showMessage(msg, isSuccess = false) {
+      const box = document.getElementById('msgBox');
+      box.textContent = msg;
+      box.className = `mb-6 p-4 rounded-xl border font-semibold ${isSuccess ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200'}`;
+      box.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function clearMessage() {
+      document.getElementById('msgBox').classList.add('hidden');
+    }
+
+    async function api(data) {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(data)
+      });
+      return await response.json();
+    }
+
+    async function adminLogin(event) {
+      event.preventDefault();
+      clearMessage();
+      const password = document.getElementById('adminPassword').value;
+      const result = await api({
+        action: 'loginAdmin',
+        password: password
+      });
+
+      if (!result.success) {
+        showMessage(result.message);
+        return;
+      }
+
+      adminPassword = password;
+      document.getElementById('loginArea').classList.add('hidden');
+      document.getElementById('adminArea').classList.remove('hidden');
+      await loadAdminData();
+    }
+
+    function showTab(tab) {
+      clearMessage();
+      document.getElementById('formsSection').classList.add('hidden');
+      document.getElementById('directorySection').classList.add('hidden');
+      document.getElementById('submissionsSection').classList.add('hidden');
+
+      document.getElementById('formsTab').className = 'bg-gray-200 px-5 py-3 rounded-lg font-bold';
+      document.getElementById('directoryTab').className = 'bg-gray-200 px-5 py-3 rounded-lg font-bold';
+      document.getElementById('submissionsTab').className = 'bg-gray-200 px-5 py-3 rounded-lg font-bold';
+
+      if (tab === 'forms') {
+        document.getElementById('formsSection').classList.remove('hidden');
+        document.getElementById('formsTab').className = 'bg-gray-900 text-white px-5 py-3 rounded-lg font-bold';
+      } else if (tab === 'directory') {
+        document.getElementById('directorySection').classList.remove('hidden');
+        document.getElementById('directoryTab').className = 'bg-gray-900 text-white px-5 py-3 rounded-lg font-bold';
+      } else if (tab === 'submissions') {
+        document.getElementById('submissionsSection').classList.remove('hidden');
+        document.getElementById('submissionsTab').className = 'bg-gray-900 text-white px-5 py-3 rounded-lg font-bold';
+      }
+    }
+
+    function addField() {
+      fields.push({
+        name: 'field_' + (fields.length + 1),
+        label: '',
+        type: 'text'
+      });
+      renderFields();
+    }
+
+    function removeField(index) {
+      fields.splice(index, 1);
+      renderFields();
+    }
+
+    function renderFields() {
+      const area = document.getElementById('fieldsArea');
+      area.innerHTML = '';
+      fields.forEach((field, index) => {
+        const div = document.createElement('div');
+        div.className = 'border rounded-lg p-4 mb-3 bg-gray-50';
+        div.innerHTML = `
+          <div class="grid md:grid-cols-3 gap-3">
+            <input value="${escapeHtml(field.name)}" onchange="fields[${index}].name=this.value" placeholder="内部名" class="border rounded-lg px-3 py-2">
+            <input value="${escapeHtml(field.label)}" onchange="fields[${index}].label=this.value" placeholder="表示ラベル" class="border rounded-lg px-3 py-2">
+            <select onchange="fields[${index}].type=this.value" class="border rounded-lg px-3 py-2 bg-white">
+              <option value="text" ${field.type === 'text' ? 'selected' : ''}>文字</option>
+              <option value="textarea" ${field.type === 'textarea' ? 'selected' : ''}>長文</option>
+              <option value="date" ${field.type === 'date' ? 'selected' : ''}>日付</option>
+              <option value="time" ${field.type === 'time' ? 'selected' : ''}>時刻</option>
+              <option value="email" ${field.type === 'email' ? 'selected' : ''}>メール</option>
+            </select>
+          </div>
+          <button type="button" onclick="removeField(${index})" class="mt-3 text-red-600 font-bold text-sm">× この項目を削除</button>
+        `;
+        area.appendChild(div);
+      });
+    }
+
+    async function createForm(event) {
+      event.preventDefault();
+      clearMessage();
+      const result = await api({
+        action: 'createFormTemplate',
+        title: document.getElementById('formTitle').value,
+        target_type: document.getElementById('formTarget').value,
+        deadline: document.getElementById('formDeadline').value,
+        fields: fields,
+        template_doc_id: document.getElementById('templateDocId').value,
+        admin_password: adminPassword
+      });
+
+      if (!result.success) {
+        showMessage(result.message);
+        return;
+      }
+
+      showMessage(`フォームを作成しました。(ID: ${result.form_id})`, true);
+      document.getElementById('formTitle').value = '';
+      document.getElementById('templateDocId').value = '';
+      fields = [];
+      renderFields();
+      await loadAdminData();
+    }
+
+    async function loadAdminData() {
+      const result = await api({
+        action: 'getFormsAndSubmissions',
+        admin_password: adminPassword
+      });
+
+      if (result.success) {
+        forms = result.forms;
+        submissions = result.submissions;
+        renderFormsList();
+        renderSubmissions();
+      }
+
+      const directory = await api({
+        action: 'getAllDirectory',
+        admin_password: adminPassword
+      });
+
+      if (directory.success) {
+        organizations = directory.organizations;
+        users = directory.users;
+        renderDirectory();
+      }
+    }
+
+    function renderFormsList() {
+      const area = document.getElementById('formsList');
+      area.innerHTML = '';
+      if (!forms.length) {
+        area.innerHTML = '<p class="text-gray-500">フォームはありません。</p>';
+        return;
+      }
+
+      forms.forEach(form => {
+        const div = document.createElement('div');
+        div.className = 'border rounded-lg p-4 mb-3 bg-gray-50';
+        div.innerHTML = `
+          <h3 class="font-bold text-lg">${escapeHtml(form.title)}</h3>
+          <p class="text-sm text-gray-500">ID: ${escapeHtml(form.form_id)} | 対象: ${form.target_type === 'organization' ? '団体' : '個人'}</p>
+          <p class="text-sm text-red-600 font-bold mt-1">締切: ${escapeHtml(form.deadline)}</p>
+        `;
+        area.appendChild(div);
+      });
+    }
+
+    function renderDirectory() {
+      const orgTable = document.getElementById('organizationsTable');
+      orgTable.innerHTML = '';
+      organizations.forEach(org => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b';
+        tr.innerHTML = `
+          <td class="p-3 font-mono font-bold">${escapeHtml(org.org_id)}</td>
+          <td class="p-3 font-bold">${escapeHtml(org.org_name)}</td>
+          <td class="p-3"><span class="px-2 py-1 text-xs bg-indigo-50 text-indigo-700 font-bold rounded">${escapeHtml(org.category)}</span></td>
+          <td class="p-3">${escapeHtml(org.rep_name)}</td>
+          <td class="p-3">${escapeHtml(org.rep_email)}</td>
+          <td class="p-3 font-mono text-indigo-600 font-bold">${escapeHtml(org.invite_code)}</td>
+        `;
+        orgTable.appendChild(tr);
+      });
+
+      const userTable = document.getElementById('usersTable');
+      userTable.innerHTML = '';
+      users.forEach(user => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b';
+        tr.innerHTML = `
+          <td class="p-3 font-mono font-bold">${escapeHtml(user.user_id)}</td>
+          <td class="p-3 font-mono">${escapeHtml(user.org_id)}</td>
+          <td class="p-3">${escapeHtml(user.user_name)}</td>
+          <td class="p-3">${escapeHtml(user.email)}</td>
+          <td class="p-3">${escapeHtml(user.role)}</td>
+        `;
+        userTable.appendChild(tr);
+      });
+    }
+
+    function renderSubmissions() {
+      const area = document.getElementById('submissionsArea');
+      area.innerHTML = '';
+      if (!submissions.length) {
+        area.innerHTML = '<p class="text-gray-500">現在、申請はありません。</p>';
+        return;
+      }
+
+      submissions.slice().reverse().forEach(sub => {
+        const form = forms.find(f => f.form_id === sub.form_id);
+        const title = form ? form.title : sub.form_id;
+
+        const card = document.createElement('div');
+        card.className = 'border rounded-xl p-5 mb-5 bg-white';
+
+        let dataHtml = '';
+        Object.entries(sub.data || {}).forEach(([key, value]) => {
+          dataHtml += `
+            <div class="bg-gray-50 p-3 rounded-lg">
+              <p class="text-xs text-gray-500 font-bold">${escapeHtml(key)}</p>
+              <p class="font-medium">${escapeHtml(value)}</p>
+            </div>
           `;
-
         });
 
-
-      card.innerHTML = `
-
-        <div class="flex flex-col md:flex-row md:justify-between gap-4">
-
-          <div>
-
-            <h3 class="text-xl font-bold">
-
-              ${escapeHtml(title)}
-
-            </h3>
-
-            <p class="text-sm text-gray-500">
-
-              申請ID：
-              ${escapeHtml(sub.sub_id)}
-
-            </p>
-
-            <p class="text-sm text-gray-500">
-
-              対象ID：
-              ${escapeHtml(sub.target_id)}
-
-            </p>
-
-            <p class="text-sm text-gray-500">
-
-              提出者：
-              ${escapeHtml(sub.submitter_name)}
-
-            </p>
-
+        card.innerHTML = `
+          <div class="flex flex-col md:flex-row md:justify-between gap-4">
+            <div>
+              <h3 class="text-xl font-bold">${escapeHtml(title)}</h3>
+              <p class="text-sm text-gray-500">申請ID: ${escapeHtml(sub.sub_id)} / 対象ID: ${escapeHtml(sub.target_id)} / 提出者: ${escapeHtml(sub.submitter_name)}</p>
+            </div>
+            <span class="px-3 py-1 bg-gray-100 rounded-full h-fit font-bold">${escapeHtml(sub.status)}</span>
           </div>
-
-
-          <span class="px-3 py-1 bg-gray-100 rounded-full h-fit">
-
-            ${escapeHtml(sub.status)}
-
-          </span>
-
-        </div>
-
-
-        <div class="grid md:grid-cols-2 gap-3 mt-5">
-
-          ${dataHtml}
-
-        </div>
-
-
-        ${
-          sub.file_url
-          ? `
-
-            <div class="mt-4">
-
-              <a
-
-                href="${escapeHtml(sub.file_url)}"
-
-                target="_blank"
-
-                class="text-blue-600 underline">
-
-                📎 添付ファイルを確認
-
-              </a>
-
-            </div>
-
-          `
-          : ''
-        }
-
-
-        ${
-          sub.generated_pdf_url
-          ? `
-
-            <div class="mt-2">
-
-              <a
-
-                href="${escapeHtml(sub.generated_pdf_url)}"
-
-                target="_blank"
-
-                class="text-blue-600 underline">
-
-                📄 生成された申請書PDFを確認
-
-              </a>
-
-            </div>
-
-          `
-          : ''
-        }
-
-
-        ${
-          sub.comment
-          ? `
-
-            <div class="mt-4 bg-red-50 p-4 rounded-lg">
-
-              <strong class="text-red-700">
-
-                現在のコメント
-
-              </strong>
-
-              <p>
-
-                ${escapeHtml(sub.comment)}
-
-              </p>
-
-            </div>
-
-          `
-          : ''
-        }
-
-
-        <div class="mt-5">
-
-          <textarea
-
-            id="comment_${sub.sub_id}"
-
-            placeholder="差戻し理由・コメント"
-
-            class="w-full border rounded-lg px-4 py-3"
-
-            rows="3"
-
-          ></textarea>
-
-
-          <div class="flex flex-wrap gap-2 mt-3">
-
-            <button
-
-              onclick="updateStatus('${sub.sub_id}', '承認')"
-
-              class="bg-green-600 text-white px-5 py-2 rounded-lg">
-
-              ✓ 承認
-
-            </button>
-
-
-            <button
-
-              onclick="updateStatus('${sub.sub_id}', '差戻し')"
-
-              class="bg-red-600 text-white px-5 py-2 rounded-lg">
-
-              ↩ 差戻し
-
-            </button>
-
+          <div class="grid md:grid-cols-2 gap-3 mt-4">${dataHtml}</div>
+          <div class="flex flex-wrap gap-4 mt-4">
+            ${sub.file_url ? `<a href="${escapeHtml(sub.file_url)}" target="_blank" class="text-indigo-600 underline text-sm font-bold">📎 添付ファイルを確認</a>` : ''}
+            ${sub.generated_pdf_url ? `<a href="${escapeHtml(sub.generated_pdf_url)}" target="_blank" class="text-indigo-600 underline text-sm font-bold">📄 生成PDFを確認</a>` : ''}
           </div>
+          <div class="mt-5 border-t pt-4">
+            <textarea id="comment_${sub.sub_id}" placeholder="差戻し理由・コメント" class="w-full border rounded-lg px-4 py-2 text-sm" rows="2"></textarea>
+            <div class="flex gap-2 mt-3">
+              <button onclick="updateStatus('${sub.sub_id}', '承認')" class="bg-green-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-green-700">✓ 承認</button>
+              <button onclick="updateStatus('${sub.sub_id}', '差戻し')" class="bg-red-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-red-700">↩ 差戻し</button>
+            </div>
+          </div>
+        `;
+        area.appendChild(card);
+      });
+    }
 
-        </div>
+    async function updateStatus(subId, status) {
+      clearMessage();
+      const comment = document.getElementById('comment_' + subId).value;
+      if (status === '差戻し' && !comment.trim()) {
+        showMessage('差戻し理由を入力してください。');
+        return;
+      }
 
-      `;
+      const result = await api({
+        action: 'updateSubmissionStatus',
+        admin_password: adminPassword,
+        sub_id: subId,
+        status: status,
+        comment: comment
+      });
 
+      if (!result.success) {
+        showMessage(result.message);
+        return;
+      }
 
-      area.appendChild(card);
+      showMessage(result.message, true);
+      await loadAdminData();
+    }
 
-    });
+    function logout() {
+      sessionStorage.removeItem('festivalAdmin');
+      adminPassword = '';
+      location.reload();
+    }
 
-}
-
-
-/* =========================================
-   審査
-========================================= */
-
-async function updateStatus(subId, status) {
-
-  const comment =
-    document.getElementById(
-      'comment_' + subId
-    ).value;
-
-
-  if (
-    status === '差戻し' &&
-    !comment.trim()
-  ) {
-
-    alert(
-      '差戻し理由を入力してください。'
-    );
-
-    return;
-
-  }
-
-
-  const result =
-    await api({
-
-      action:
-        'updateSubmissionStatus',
-
-      admin_password:
-        adminPassword,
-
-      sub_id:
-        subId,
-
-      status:
-        status,
-
-      comment:
-        comment
-
-    });
-
-
-  if (!result.success) {
-
-    alert(result.message);
-
-    return;
-
-  }
-
-
-  alert(result.message);
-
-  await loadAdminData();
-
-}
-
-
-/* =========================================
-   ログアウト
-========================================= */
-
-function logout() {
-
-  sessionStorage.removeItem(
-    'festivalAdmin'
-  );
-
-  adminPassword = '';
-
-  location.reload();
-
-}
-
-
-/* =========================================
-   Escape
-========================================= */
-
-function escapeHtml(value) {
-
-  return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-
-}
-
-
-/* =========================================
-   起動
-========================================= */
-
-window.addEventListener(
-  'DOMContentLoaded',
-  () => {
-
-    /*
-     * 管理者パスワードそのものは
-     * sessionStorageには保存しない。
-     *
-     * ページを再読み込みした場合は
-     * 再ログインする。
-     */
-
-  }
-);
-
-</script>
-
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
 </body>
 </html>
